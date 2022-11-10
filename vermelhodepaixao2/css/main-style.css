@@ -1,0 +1,14 @@
+body {
+    background-repeat: no-repeat;
+    background-size: cover;
+} 
+.hidden_ {
+    display: none !important;
+}
+.shown_ {
+    display: flex !important;
+}
+.link-danger {
+    text-decoration: none;
+}
+
