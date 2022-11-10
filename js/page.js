@@ -76,8 +76,8 @@ const load_content = function() {
             divcontent.setAttribute("class", "card-body");
             var textcontent = document.createTextNode(artigo.content);
 
-            var disqus_div = document.createElement("div");
-            disqus_div.setAttribute("id", "disqus_thread");
+            //var disqus_div = document.createElement("div");
+            //disqus_div.setAttribute("id", "disqus_thread");
 
             var cardfooter = document.createElement("footer");
             cardfooter.setAttribute("class", "card-footer");
@@ -140,7 +140,7 @@ const load_content = function() {
 
             //divcards.appendChild(cardfooter);
 
-            addElement(divcards, disqus_div);
+            //addElement(divcards, disqus_div);
 
             //ADD FOOTER
             addElement(divcards, cardfooter);
