@@ -11,4 +11,90 @@ body {
 .link-danger {
     text-decoration: none;
 }
+/* main-style.css */
 
+/* Smooth transitions */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Loading animation */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Ensure images don't overflow */
+.card-img-top {
+    max-height: 300px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Animation for new content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Search highlight */
+.highlight {
+    background-color: #ffc107;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+.card-img-top {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100%;
+    max-height: 500px !important; /* Increased from 300px */
+    object-fit: contain !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Force images to maintain aspect ratio */
+.card-img-top[width][height] {
+    aspect-ratio: attr(width) / attr(height);
+}
+
+/* Container for images */
+.card .card-body + img.card-img-top,
+.card .card-header + img.card-img-top {
+    margin: 15px auto !important;
+    padding: 0 15px;
+}
+
+/* Override Bootstrap's img-fluid if needed */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}

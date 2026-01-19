@@ -1,0 +1,660 @@
+2026-01-18 10:16:27,009 - INFO - Page 1: http://www.vermelhodepaixao.com.br/search?updated-max=2017-05-26T10:55:00-03:00&max-results=56&start=8952&by-date=false
+2026-01-18 10:16:28,563 - INFO - Found 56 new posts
+2026-01-18 10:16:28,580 - INFO - Total posts: 56
+2026-01-18 10:16:29,588 - INFO - Page 2: http://www.vermelhodepaixao.com.br/search?updated-max=2017-05-18T06:06:00-03:00&max-results=56&start=9008&by-date=false
+2026-01-18 10:16:30,934 - INFO - Found 56 new posts
+2026-01-18 10:16:30,959 - INFO - Total posts: 112
+2026-01-18 10:16:31,966 - INFO - Page 3: http://www.vermelhodepaixao.com.br/search?updated-max=2017-05-08T16:01:00-03:00&max-results=56&start=9064&by-date=false
+2026-01-18 10:16:32,951 - INFO - Found 56 new posts
+2026-01-18 10:16:32,967 - INFO - Total posts: 168
+2026-01-18 10:16:33,981 - INFO - Page 4: http://www.vermelhodepaixao.com.br/search?updated-max=2017-04-22T21:43:00-03:00&max-results=56&start=9120&by-date=false
+2026-01-18 10:16:34,963 - INFO - Found 56 new posts
+2026-01-18 10:16:34,979 - INFO - Total posts: 224
+2026-01-18 10:16:35,993 - INFO - Page 5: http://www.vermelhodepaixao.com.br/search?updated-max=2017-04-10T19:45:00-03:00&max-results=56&start=9176&by-date=false
+2026-01-18 10:16:36,963 - INFO - Found 50 new posts
+2026-01-18 10:16:36,978 - INFO - Total posts: 274
+2026-01-18 10:16:37,019 - INFO - Checkpoint saved: checkpoint_5.json
+2026-01-18 10:16:38,023 - INFO - Page 6: http://www.vermelhodepaixao.com.br/search?updated-max=2017-04-02T08:58:00-03:00&max-results=56&start=9232&by-date=false
+2026-01-18 10:16:39,023 - INFO - Found 53 new posts
+2026-01-18 10:16:39,038 - INFO - Total posts: 327
+2026-01-18 10:16:40,043 - INFO - Page 7: http://www.vermelhodepaixao.com.br/search?updated-max=2017-03-21T18:44:00-03:00&max-results=56&start=9288&by-date=false
+2026-01-18 10:16:41,253 - INFO - Found 52 new posts
+2026-01-18 10:16:41,269 - INFO - Total posts: 379
+2026-01-18 10:16:42,282 - INFO - Page 8: http://www.vermelhodepaixao.com.br/search?updated-max=2017-03-12T18:53:00-03:00&max-results=56&start=9344&by-date=false
+2026-01-18 10:16:43,386 - INFO - Found 54 new posts
+2026-01-18 10:16:43,402 - INFO - Total posts: 433
+2026-01-18 10:16:44,409 - INFO - Page 9: http://www.vermelhodepaixao.com.br/search?updated-max=2017-03-05T09:34:00-03:00&max-results=56&start=9400&by-date=false
+2026-01-18 10:16:45,361 - INFO - Found 55 new posts
+2026-01-18 10:16:45,377 - INFO - Total posts: 488
+2026-01-18 10:16:46,388 - INFO - Page 10: http://www.vermelhodepaixao.com.br/search?updated-max=2017-02-22T10:47:00-03:00&max-results=56&start=9456&by-date=false
+2026-01-18 10:16:47,418 - INFO - Found 54 new posts
+2026-01-18 10:16:47,439 - INFO - Total posts: 542
+2026-01-18 10:16:47,492 - INFO - Checkpoint saved: checkpoint_10.json
+2026-01-18 10:16:48,503 - INFO - Page 11: http://www.vermelhodepaixao.com.br/search?updated-max=2017-02-14T14:22:00-03:00&max-results=56&start=9512&by-date=false
+2026-01-18 10:16:49,661 - INFO - Found 50 new posts
+2026-01-18 10:16:49,677 - INFO - Total posts: 592
+2026-01-18 10:16:50,688 - INFO - Page 12: http://www.vermelhodepaixao.com.br/search?updated-max=2017-02-08T08:48:00-03:00&max-results=56&start=9568&by-date=false
+2026-01-18 10:16:51,569 - INFO - Found 50 new posts
+2026-01-18 10:16:51,583 - INFO - Total posts: 642
+2026-01-18 10:16:52,598 - INFO - Page 13: http://www.vermelhodepaixao.com.br/search?updated-max=2017-02-02T12:10:00-03:00&max-results=56&start=9624&by-date=false
+2026-01-18 10:16:53,699 - INFO - Found 49 new posts
+2026-01-18 10:16:53,715 - INFO - Total posts: 691
+2026-01-18 10:16:54,724 - INFO - Page 14: http://www.vermelhodepaixao.com.br/search?updated-max=2017-01-26T13:16:00-03:00&max-results=56&start=9680&by-date=false
+2026-01-18 10:16:55,787 - INFO - Found 52 new posts
+2026-01-18 10:16:55,805 - INFO - Total posts: 743
+2026-01-18 10:16:56,807 - INFO - Page 15: http://www.vermelhodepaixao.com.br/search?updated-max=2017-01-19T13:56:00-03:00&max-results=56&start=9736&by-date=false
+2026-01-18 10:16:57,697 - INFO - Found 54 new posts
+2026-01-18 10:16:57,713 - INFO - Total posts: 797
+2026-01-18 10:16:57,852 - INFO - Checkpoint saved: checkpoint_15.json
+2026-01-18 10:16:58,865 - INFO - Page 16: http://www.vermelhodepaixao.com.br/search?updated-max=2017-01-12T09:36:00-03:00&max-results=56&start=9792&by-date=false
+2026-01-18 10:17:00,522 - INFO - Found 55 new posts
+2026-01-18 10:17:00,536 - INFO - Total posts: 852
+2026-01-18 10:17:01,547 - INFO - Page 17: http://www.vermelhodepaixao.com.br/search?updated-max=2017-01-03T06:37:00-03:00&max-results=56&start=9848&by-date=false
+2026-01-18 10:17:02,418 - INFO - Found 55 new posts
+2026-01-18 10:17:02,436 - INFO - Total posts: 907
+2026-01-18 10:17:03,438 - INFO - Page 18: http://www.vermelhodepaixao.com.br/search?updated-max=2016-12-20T06:43:00-03:00&max-results=56&start=9904&by-date=false
+2026-01-18 10:17:04,424 - INFO - Found 51 new posts
+2026-01-18 10:17:04,440 - INFO - Total posts: 958
+2026-01-18 10:17:05,445 - INFO - Page 19: http://www.vermelhodepaixao.com.br/search?updated-max=2016-12-07T08:55:00-03:00&max-results=56&start=9960&by-date=false
+2026-01-18 10:17:06,609 - INFO - Found 55 new posts
+2026-01-18 10:17:06,627 - INFO - Total posts: 1013
+2026-01-18 10:17:07,629 - INFO - Page 20: http://www.vermelhodepaixao.com.br/search?updated-max=2016-11-18T13:03:00-03:00&max-results=56&start=10016&by-date=false
+2026-01-18 10:17:10,128 - INFO - Found 55 new posts
+2026-01-18 10:17:10,147 - INFO - Total posts: 1068
+2026-01-18 10:17:10,186 - INFO - Checkpoint saved: checkpoint_20.json
+2026-01-18 10:17:11,195 - INFO - Page 21: http://www.vermelhodepaixao.com.br/search?updated-max=2016-10-17T06:06:00-03:00&max-results=56&start=10072&by-date=false
+2026-01-18 10:17:12,283 - INFO - Found 55 new posts
+2026-01-18 10:17:12,299 - INFO - Total posts: 1123
+2026-01-18 10:17:13,304 - INFO - Page 22: http://www.vermelhodepaixao.com.br/search?updated-max=2016-09-21T10:54:00-03:00&max-results=56&start=10128&by-date=false
+2026-01-18 10:17:14,526 - INFO - Found 53 new posts
+2026-01-18 10:17:14,544 - INFO - Total posts: 1176
+2026-01-18 10:17:15,546 - INFO - Page 23: http://www.vermelhodepaixao.com.br/search?updated-max=2016-09-11T18:16:00-03:00&max-results=56&start=10184&by-date=false
+2026-01-18 10:17:16,581 - INFO - Found 49 new posts
+2026-01-18 10:17:16,598 - INFO - Total posts: 1225
+2026-01-18 10:17:17,600 - INFO - Page 24: http://www.vermelhodepaixao.com.br/search?updated-max=2016-09-04T08:29:00-03:00&max-results=56&start=10240&by-date=false
+2026-01-18 10:17:18,727 - INFO - Found 51 new posts
+2026-01-18 10:17:18,747 - INFO - Total posts: 1276
+2026-01-18 10:17:19,755 - INFO - Page 25: http://www.vermelhodepaixao.com.br/search?updated-max=2016-08-29T07:47:00-03:00&max-results=56&start=10296&by-date=false
+2026-01-18 10:17:20,811 - INFO - Found 49 new posts
+2026-01-18 10:17:20,828 - INFO - Total posts: 1325
+2026-01-18 10:17:20,873 - INFO - Checkpoint saved: checkpoint_25.json
+2026-01-18 10:17:21,878 - INFO - Page 26: http://www.vermelhodepaixao.com.br/search?updated-max=2016-08-23T06:06:00-03:00&max-results=56&start=10352&by-date=false
+2026-01-18 10:17:22,734 - INFO - Found 52 new posts
+2026-01-18 10:17:22,749 - INFO - Total posts: 1377
+2026-01-18 10:17:23,762 - INFO - Page 27: http://www.vermelhodepaixao.com.br/search?updated-max=2016-08-16T10:17:00-03:00&max-results=56&start=10408&by-date=false
+2026-01-18 10:17:25,244 - INFO - Found 51 new posts
+2026-01-18 10:17:25,261 - INFO - Total posts: 1428
+2026-01-18 10:17:26,269 - INFO - Page 28: http://www.vermelhodepaixao.com.br/search?updated-max=2016-08-10T15:17:00-03:00&max-results=56&start=10464&by-date=false
+2026-01-18 10:17:27,203 - INFO - Found 52 new posts
+2026-01-18 10:17:27,218 - INFO - Total posts: 1480
+2026-01-18 10:17:28,221 - INFO - Page 29: http://www.vermelhodepaixao.com.br/search?updated-max=2016-08-05T13:13:00-03:00&max-results=56&start=10520&by-date=false
+2026-01-18 10:17:29,686 - INFO - Found 51 new posts
+2026-01-18 10:17:29,703 - INFO - Total posts: 1531
+2026-01-18 10:17:30,708 - INFO - Page 30: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-31T21:34:00-03:00&max-results=56&start=10576&by-date=false
+2026-01-18 10:17:31,730 - INFO - Found 52 new posts
+2026-01-18 10:17:31,748 - INFO - Total posts: 1583
+2026-01-18 10:17:31,802 - INFO - Checkpoint saved: checkpoint_30.json
+2026-01-18 10:17:32,807 - INFO - Page 31: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-27T07:56:00-03:00&max-results=56&start=10632&by-date=false
+2026-01-18 10:17:34,196 - INFO - Found 51 new posts
+2026-01-18 10:17:34,212 - INFO - Total posts: 1634
+2026-01-18 10:17:35,221 - INFO - Page 32: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-21T13:59:00-03:00&max-results=56&start=10688&by-date=false
+2026-01-18 10:17:36,187 - INFO - Found 52 new posts
+2026-01-18 10:17:36,204 - INFO - Total posts: 1686
+2026-01-18 10:17:37,213 - INFO - Page 33: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-16T06:56:00-03:00&max-results=56&start=10744&by-date=false
+2026-01-18 10:17:38,163 - INFO - Found 18 new posts
+2026-01-18 10:17:38,173 - INFO - Total posts: 1704
+2026-01-18 10:17:39,184 - INFO - Page 34: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-14T10:03:00-03:00&max-results=56&start=10763&by-date=false
+2026-01-18 10:17:40,172 - INFO - Found 51 new posts
+2026-01-18 10:17:40,188 - INFO - Total posts: 1755
+2026-01-18 10:17:41,194 - INFO - Page 35: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-08T07:07:00-03:00&max-results=56&start=10819&by-date=false
+2026-01-18 10:17:42,320 - INFO - Found 47 new posts
+2026-01-18 10:17:42,335 - INFO - Total posts: 1802
+2026-01-18 10:17:42,395 - INFO - Checkpoint saved: checkpoint_35.json
+2026-01-18 10:17:43,396 - INFO - Page 36: http://www.vermelhodepaixao.com.br/search?updated-max=2016-07-02T12:12:00-03:00&max-results=56&start=10875&by-date=false
+2026-01-18 10:17:44,387 - INFO - Found 19 new posts
+2026-01-18 10:17:44,397 - INFO - Total posts: 1821
+2026-01-18 10:17:45,407 - INFO - Page 37: http://www.vermelhodepaixao.com.br/search?updated-max=2016-06-30T13:43:00-03:00&max-results=56&start=10895&by-date=false
+2026-01-18 10:17:46,421 - INFO - Found 52 new posts
+2026-01-18 10:17:46,438 - INFO - Total posts: 1873
+2026-01-18 10:17:47,452 - INFO - Page 38: http://www.vermelhodepaixao.com.br/search?updated-max=2016-06-25T19:57:00-03:00&max-results=56&start=10951&by-date=false
+2026-01-18 10:17:48,653 - INFO - Found 52 new posts
+2026-01-18 10:17:48,669 - INFO - Total posts: 1925
+2026-01-18 10:17:49,693 - INFO - Page 39: http://www.vermelhodepaixao.com.br/search?updated-max=2016-06-19T13:34:00-03:00&max-results=56&start=11007&by-date=false
+2026-01-18 10:17:50,747 - INFO - Found 53 new posts
+2026-01-18 10:17:50,763 - INFO - Total posts: 1978
+2026-01-18 10:17:51,768 - INFO - Page 40: http://www.vermelhodepaixao.com.br/search?updated-max=2016-06-12T20:57:00-03:00&max-results=56&start=11063&by-date=false
+2026-01-18 10:17:52,847 - INFO - Found 53 new posts
+2026-01-18 10:17:52,862 - INFO - Total posts: 2031
+2026-01-18 10:17:52,929 - INFO - Checkpoint saved: checkpoint_40.json
+2026-01-18 10:17:53,938 - INFO - Page 41: http://www.vermelhodepaixao.com.br/search?updated-max=2016-06-06T12:27:00-03:00&max-results=56&start=11119&by-date=false
+2026-01-18 10:17:54,966 - INFO - Found 33 new posts
+2026-01-18 10:17:54,980 - INFO - Total posts: 2064
+2026-01-18 10:17:55,990 - INFO - Page 42: http://www.vermelhodepaixao.com.br/search?updated-max=2016-06-03T08:46:00-03:00&max-results=56&start=11156&by-date=false
+2026-01-18 10:17:57,119 - INFO - Found 52 new posts
+2026-01-18 10:17:57,136 - INFO - Total posts: 2116
+2026-01-18 10:17:58,153 - INFO - Page 43: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-28T21:53:00-03:00&max-results=56&start=11212&by-date=false
+2026-01-18 10:17:59,213 - INFO - Found 34 new posts
+2026-01-18 10:17:59,226 - INFO - Total posts: 2150
+2026-01-18 10:18:00,237 - INFO - Page 44: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-25T10:22:00-03:00&max-results=56&start=11248&by-date=false
+2026-01-18 10:18:01,114 - INFO - Found 16 new posts
+2026-01-18 10:18:01,125 - INFO - Total posts: 2166
+2026-01-18 10:18:02,135 - INFO - Page 45: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-24T10:39:00-03:00&max-results=56&start=11265&by-date=false
+2026-01-18 10:18:02,996 - INFO - Found 24 new posts
+2026-01-18 10:18:03,013 - INFO - Total posts: 2190
+2026-01-18 10:18:03,113 - INFO - Checkpoint saved: checkpoint_45.json
+2026-01-18 10:18:04,127 - INFO - Page 46: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-23T05:00:00-03:00&max-results=56&start=11290&by-date=false
+2026-01-18 10:18:05,237 - INFO - Found 46 new posts
+2026-01-18 10:18:05,254 - INFO - Total posts: 2236
+2026-01-18 10:18:06,256 - INFO - Page 47: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-19T13:51:00-03:00&max-results=56&start=11337&by-date=false
+2026-01-18 10:18:07,290 - INFO - Found 51 new posts
+2026-01-18 10:18:07,305 - INFO - Total posts: 2287
+2026-01-18 10:18:08,311 - INFO - Page 48: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-14T08:08:00-03:00&max-results=56&start=11393&by-date=false
+2026-01-18 10:18:09,476 - INFO - Found 54 new posts
+2026-01-18 10:18:09,491 - INFO - Total posts: 2341
+2026-01-18 10:18:10,499 - INFO - Page 49: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-10T16:18:00-03:00&max-results=56&start=11449&by-date=false
+2026-01-18 10:18:11,458 - INFO - Found 53 new posts
+2026-01-18 10:18:11,475 - INFO - Total posts: 2394
+2026-01-18 10:18:12,479 - INFO - Page 50: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-03T15:15:00-03:00&max-results=56&start=11505&by-date=false
+2026-01-18 10:18:13,229 - INFO - Found 8 new posts
+2026-01-18 10:18:13,237 - INFO - Total posts: 2402
+2026-01-18 10:18:13,320 - INFO - Checkpoint saved: checkpoint_50.json
+2026-01-18 10:18:14,328 - INFO - Page 51: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-03T08:08:00-03:00&max-results=56&start=11513&by-date=false
+2026-01-18 10:18:15,095 - INFO - Found 7 new posts
+2026-01-18 10:18:15,103 - INFO - Total posts: 2409
+2026-01-18 10:18:16,105 - INFO - Page 52: http://www.vermelhodepaixao.com.br/search?updated-max=2016-05-02T11:02:00-03:00&max-results=56&start=11522&by-date=false
+2026-01-18 10:18:17,627 - INFO - Found 56 new posts
+2026-01-18 10:18:17,644 - INFO - Total posts: 2465
+2026-01-18 10:18:18,658 - INFO - Page 53: http://www.vermelhodepaixao.com.br/search?updated-max=2016-04-26T18:52:00-03:00&max-results=56&start=11578&by-date=false
+2026-01-18 10:18:19,765 - INFO - Found 49 new posts
+2026-01-18 10:18:19,783 - INFO - Total posts: 2514
+2026-01-18 10:18:20,792 - INFO - Page 54: http://www.vermelhodepaixao.com.br/search?updated-max=2016-04-20T09:45:00-03:00&max-results=56&start=11634&by-date=false
+2026-01-18 10:18:21,639 - INFO - Found 53 new posts
+2026-01-18 10:18:21,654 - INFO - Total posts: 2567
+2026-01-18 10:18:22,667 - INFO - Page 55: http://www.vermelhodepaixao.com.br/search?updated-max=2016-04-14T06:06:00-03:00&max-results=56&start=11690&by-date=false
+2026-01-18 10:18:24,094 - INFO - Found 50 new posts
+2026-01-18 10:18:24,111 - INFO - Total posts: 2617
+2026-01-18 10:18:24,197 - INFO - Checkpoint saved: checkpoint_55.json
+2026-01-18 10:18:25,211 - INFO - Page 56: http://www.vermelhodepaixao.com.br/search?updated-max=2016-04-08T08:08:00-03:00&max-results=56&start=11746&by-date=false
+2026-01-18 10:18:26,338 - INFO - Found 51 new posts
+2026-01-18 10:18:26,356 - INFO - Total posts: 2668
+2026-01-18 10:18:27,363 - INFO - Page 57: http://www.vermelhodepaixao.com.br/search?updated-max=2016-04-01T11:04:00-03:00&max-results=56&start=11802&by-date=false
+2026-01-18 10:18:28,289 - INFO - Found 44 new posts
+2026-01-18 10:18:28,303 - INFO - Total posts: 2712
+2026-01-18 10:18:29,310 - INFO - Page 58: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-26T10:16:00-03:00&max-results=56&start=11850&by-date=false
+2026-01-18 10:18:30,308 - INFO - Found 40 new posts
+2026-01-18 10:18:30,324 - INFO - Total posts: 2752
+2026-01-18 10:18:31,324 - INFO - Page 59: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-22T14:43:00-03:00&max-results=56&start=11890&by-date=false
+2026-01-18 10:18:32,569 - INFO - Found 38 new posts
+2026-01-18 10:18:32,593 - INFO - Total posts: 2790
+2026-01-18 10:18:33,608 - INFO - Page 60: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-18T17:44:00-03:00&max-results=56&start=11932&by-date=false
+2026-01-18 10:18:34,309 - INFO - Found 2 new posts
+2026-01-18 10:18:34,319 - INFO - Total posts: 2792
+2026-01-18 10:18:34,441 - INFO - Checkpoint saved: checkpoint_60.json
+2026-01-18 10:18:35,454 - INFO - Page 61: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-18T17:37:00-03:00&max-results=56&start=11934&by-date=false
+2026-01-18 10:18:36,523 - INFO - Found 52 new posts
+2026-01-18 10:18:36,540 - INFO - Total posts: 2844
+2026-01-18 10:18:37,546 - INFO - Page 62: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-12T09:31:00-03:00&max-results=56&start=11990&by-date=false
+2026-01-18 10:18:38,601 - INFO - Found 55 new posts
+2026-01-18 10:18:38,616 - INFO - Total posts: 2899
+2026-01-18 10:18:39,629 - INFO - Page 63: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-07T14:29:00-03:00&max-results=56&start=12046&by-date=false
+2026-01-18 10:18:40,549 - INFO - Found 28 new posts
+2026-01-18 10:18:40,563 - INFO - Total posts: 2927
+2026-01-18 10:18:41,570 - INFO - Page 64: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-04T11:46:00-03:00&max-results=56&start=12076&by-date=false
+2026-01-18 10:18:42,341 - INFO - Found 11 new posts
+2026-01-18 10:18:42,351 - INFO - Total posts: 2938
+2026-01-18 10:18:43,361 - INFO - Page 65: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-03T12:05:00-03:00&max-results=56&start=12089&by-date=false
+2026-01-18 10:18:44,213 - INFO - Found 27 new posts
+2026-01-18 10:18:44,224 - INFO - Total posts: 2965
+2026-01-18 10:18:44,322 - INFO - Checkpoint saved: checkpoint_65.json
+2026-01-18 10:18:45,326 - INFO - Page 66: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-01T20:00:00-03:00&max-results=56&start=12119&by-date=false
+2026-01-18 10:18:46,077 - INFO - Found 11 new posts
+2026-01-18 10:18:46,086 - INFO - Total posts: 2976
+2026-01-18 10:18:47,100 - INFO - Page 67: http://www.vermelhodepaixao.com.br/search?updated-max=2016-03-01T09:09:00-03:00&max-results=56&start=12130&by-date=false
+2026-01-18 10:18:47,976 - INFO - Found 15 new posts
+2026-01-18 10:18:47,987 - INFO - Total posts: 2991
+2026-01-18 10:18:48,993 - INFO - Page 68: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-29T10:20:00-03:00&max-results=56&start=12146&by-date=false
+2026-01-18 10:18:49,972 - INFO - Found 52 new posts
+2026-01-18 10:18:49,988 - INFO - Total posts: 3043
+2026-01-18 10:18:50,998 - INFO - Page 69: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-24T11:16:00-03:00&max-results=56&start=12202&by-date=false
+2026-01-18 10:18:52,221 - INFO - Found 52 new posts
+2026-01-18 10:18:52,239 - INFO - Total posts: 3095
+2026-01-18 10:18:53,252 - INFO - Page 70: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-19T09:29:00-03:00&max-results=56&start=12258&by-date=false
+2026-01-18 10:18:54,019 - INFO - Found 14 new posts
+2026-01-18 10:18:54,029 - INFO - Total posts: 3109
+2026-01-18 10:18:54,196 - INFO - Checkpoint saved: checkpoint_70.json
+2026-01-18 10:18:55,198 - INFO - Page 71: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-18T07:26:00-03:00&max-results=56&start=12275&by-date=false
+2026-01-18 10:18:56,313 - INFO - Found 50 new posts
+2026-01-18 10:18:56,329 - INFO - Total posts: 3159
+2026-01-18 10:18:57,340 - INFO - Page 72: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-13T09:46:00-03:00&max-results=56&start=12331&by-date=false
+2026-01-18 10:18:58,343 - INFO - Found 51 new posts
+2026-01-18 10:18:58,357 - INFO - Total posts: 3210
+2026-01-18 10:18:59,371 - INFO - Page 73: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-06T09:54:00-03:00&max-results=56&start=12387&by-date=false
+2026-01-18 10:19:00,346 - INFO - Found 50 new posts
+2026-01-18 10:19:00,363 - INFO - Total posts: 3260
+2026-01-18 10:19:01,374 - INFO - Page 74: http://www.vermelhodepaixao.com.br/search?updated-max=2016-02-01T15:00:00-03:00&max-results=56&start=12443&by-date=false
+2026-01-18 10:19:02,502 - INFO - Found 48 new posts
+2026-01-18 10:19:02,529 - INFO - Total posts: 3308
+2026-01-18 10:19:03,541 - INFO - Page 75: http://www.vermelhodepaixao.com.br/search?updated-max=2016-01-27T09:09:00-03:00&max-results=56&start=12499&by-date=false
+2026-01-18 10:19:05,324 - INFO - Found 48 new posts
+2026-01-18 10:19:05,340 - INFO - Total posts: 3356
+2026-01-18 10:19:05,523 - INFO - Checkpoint saved: checkpoint_75.json
+2026-01-18 10:19:06,535 - INFO - Page 76: http://www.vermelhodepaixao.com.br/search?updated-max=2016-01-21T18:22:00-03:00&max-results=56&start=12555&by-date=false
+2026-01-18 10:19:07,687 - INFO - Found 20 new posts
+2026-01-18 10:19:07,697 - INFO - Total posts: 3376
+2026-01-18 10:19:08,710 - INFO - Page 77: http://www.vermelhodepaixao.com.br/search?updated-max=2016-01-19T14:11:00-03:00&max-results=56&start=12575&by-date=false
+2026-01-18 10:19:09,756 - INFO - Found 10 new posts
+2026-01-18 10:19:09,764 - INFO - Total posts: 3386
+2026-01-18 10:19:10,765 - INFO - Page 78: http://www.vermelhodepaixao.com.br/search?updated-max=2016-01-18T17:12:00-03:00&max-results=56&start=12586&by-date=false
+2026-01-18 10:19:11,742 - INFO - Found 18 new posts
+2026-01-18 10:19:11,754 - INFO - Total posts: 3404
+2026-01-18 10:19:12,765 - INFO - Page 79: http://www.vermelhodepaixao.com.br/search?updated-max=2016-01-15T12:00:00-03:00&max-results=56&start=12607&by-date=false
+2026-01-18 10:19:13,916 - INFO - Found 48 new posts
+2026-01-18 10:19:13,932 - INFO - Total posts: 3452
+2026-01-18 10:19:14,946 - INFO - Page 80: http://www.vermelhodepaixao.com.br/search?updated-max=2016-01-08T17:05:00-03:00&max-results=56&start=12663&by-date=false
+2026-01-18 10:19:15,951 - INFO - Found 54 new posts
+2026-01-18 10:19:15,967 - INFO - Total posts: 3506
+2026-01-18 10:19:16,142 - INFO - Checkpoint saved: checkpoint_80.json
+2026-01-18 10:19:17,149 - INFO - Page 81: http://www.vermelhodepaixao.com.br/search?updated-max=2015-12-23T19:09:00-03:00&max-results=56&start=12719&by-date=false
+2026-01-18 10:19:18,077 - INFO - Found 36 new posts
+2026-01-18 10:19:18,090 - INFO - Total posts: 3542
+2026-01-18 10:19:19,104 - INFO - Page 82: http://www.vermelhodepaixao.com.br/search?updated-max=2015-12-16T21:30:00-03:00&max-results=56&start=12756&by-date=false
+2026-01-18 10:19:20,109 - INFO - Found 47 new posts
+2026-01-18 10:19:20,126 - INFO - Total posts: 3589
+2026-01-18 10:19:21,129 - INFO - Page 83: http://www.vermelhodepaixao.com.br/search?updated-max=2015-12-02T13:22:00-03:00&max-results=56&start=12812&by-date=false
+2026-01-18 10:19:22,084 - INFO - Found 50 new posts
+2026-01-18 10:19:22,102 - INFO - Total posts: 3639
+2026-01-18 10:19:23,103 - INFO - Page 84: http://www.vermelhodepaixao.com.br/search?updated-max=2015-11-21T21:09:00-03:00&max-results=56&start=12868&by-date=false
+2026-01-18 10:19:24,188 - INFO - Found 47 new posts
+2026-01-18 10:19:24,205 - INFO - Total posts: 3686
+2026-01-18 10:19:25,221 - INFO - Page 85: http://www.vermelhodepaixao.com.br/search?updated-max=2015-11-09T20:07:00-03:00&max-results=56&start=12924&by-date=false
+2026-01-18 10:19:26,215 - INFO - Found 53 new posts
+2026-01-18 10:19:26,231 - INFO - Total posts: 3739
+2026-01-18 10:19:26,413 - INFO - Checkpoint saved: checkpoint_85.json
+2026-01-18 10:19:27,419 - INFO - Page 86: http://www.vermelhodepaixao.com.br/search?updated-max=2015-10-30T16:34:00-03:00&max-results=56&start=12980&by-date=false
+2026-01-18 10:19:28,368 - INFO - Found 51 new posts
+2026-01-18 10:19:28,384 - INFO - Total posts: 3790
+2026-01-18 10:19:29,392 - INFO - Page 87: http://www.vermelhodepaixao.com.br/search?updated-max=2015-10-19T09:09:00-03:00&max-results=56&start=13036&by-date=false
+2026-01-18 10:19:30,450 - INFO - Found 50 new posts
+2026-01-18 10:19:30,468 - INFO - Total posts: 3840
+2026-01-18 10:19:31,484 - INFO - Page 88: http://www.vermelhodepaixao.com.br/search?updated-max=2015-10-09T06:07:00-03:00&max-results=56&start=13092&by-date=false
+2026-01-18 10:19:32,609 - INFO - Found 52 new posts
+2026-01-18 10:19:32,626 - INFO - Total posts: 3892
+2026-01-18 10:19:33,641 - INFO - Page 89: http://www.vermelhodepaixao.com.br/search?updated-max=2015-09-30T20:19:00-03:00&max-results=56&start=13148&by-date=false
+2026-01-18 10:19:34,685 - INFO - Found 48 new posts
+2026-01-18 10:19:34,703 - INFO - Total posts: 3940
+2026-01-18 10:19:35,715 - INFO - Page 90: http://www.vermelhodepaixao.com.br/search?updated-max=2015-09-23T08:29:00-03:00&max-results=56&start=13204&by-date=false
+2026-01-18 10:19:36,937 - INFO - Found 51 new posts
+2026-01-18 10:19:36,953 - INFO - Total posts: 3991
+2026-01-18 10:19:37,091 - INFO - Checkpoint saved: checkpoint_90.json
+2026-01-18 10:19:38,092 - INFO - Page 91: http://www.vermelhodepaixao.com.br/search?updated-max=2015-09-18T06:44:00-03:00&max-results=56&start=13260&by-date=false
+2026-01-18 10:19:39,274 - INFO - Found 45 new posts
+2026-01-18 10:19:39,290 - INFO - Total posts: 4036
+2026-01-18 10:19:40,304 - INFO - Page 92: http://www.vermelhodepaixao.com.br/search?updated-max=2015-09-12T08:54:00-03:00&max-results=56&start=13316&by-date=false
+2026-01-18 10:19:41,317 - INFO - Found 46 new posts
+2026-01-18 10:19:41,335 - INFO - Total posts: 4082
+2026-01-18 10:19:42,347 - INFO - Page 93: http://www.vermelhodepaixao.com.br/search?updated-max=2015-09-07T12:00:00-03:00&max-results=56&start=13372&by-date=false
+2026-01-18 10:19:43,084 - INFO - Found 36 new posts
+2026-01-18 10:19:43,098 - INFO - Total posts: 4118
+2026-01-18 10:19:44,101 - INFO - Page 94: http://www.vermelhodepaixao.com.br/search?updated-max=2015-09-02T13:08:00-03:00&max-results=56&start=13410&by-date=false
+2026-01-18 10:19:44,920 - INFO - Found 16 new posts
+2026-01-18 10:19:44,931 - INFO - Total posts: 4134
+2026-01-18 10:19:45,940 - INFO - Page 95: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-31T13:43:00-03:00&max-results=56&start=13429&by-date=false
+2026-01-18 10:19:47,156 - INFO - Found 34 new posts
+2026-01-18 10:19:47,171 - INFO - Total posts: 4168
+2026-01-18 10:19:47,372 - INFO - Checkpoint saved: checkpoint_95.json
+2026-01-18 10:19:48,385 - INFO - Page 96: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-27T17:50:00-03:00&max-results=56&start=13473&by-date=false
+2026-01-18 10:19:49,267 - INFO - Found 48 new posts
+2026-01-18 10:19:49,283 - INFO - Total posts: 4216
+2026-01-18 10:19:50,295 - INFO - Page 97: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-22T09:53:00-03:00&max-results=56&start=13529&by-date=false
+2026-01-18 10:19:51,478 - INFO - Found 43 new posts
+2026-01-18 10:19:51,495 - INFO - Total posts: 4259
+2026-01-18 10:19:52,497 - INFO - Page 98: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-16T22:00:00-03:00&max-results=56&start=13583&by-date=false
+2026-01-18 10:19:53,145 - INFO - Found 12 new posts
+2026-01-18 10:19:53,155 - INFO - Total posts: 4271
+2026-01-18 10:19:54,170 - INFO - Page 99: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-15T18:30:00-03:00&max-results=56&start=13597&by-date=false
+2026-01-18 10:19:55,128 - INFO - Found 53 new posts
+2026-01-18 10:19:55,144 - INFO - Total posts: 4324
+2026-01-18 10:19:56,148 - INFO - Page 100: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-11T12:26:00-03:00&max-results=56&start=13653&by-date=false
+2026-01-18 10:19:57,632 - INFO - Found 49 new posts
+2026-01-18 10:19:57,647 - INFO - Total posts: 4373
+2026-01-18 10:19:57,781 - INFO - Checkpoint saved: checkpoint_100.json
+2026-01-18 10:19:58,795 - INFO - Page 101: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-06T17:38:00-03:00&max-results=56&start=13709&by-date=false
+2026-01-18 10:20:00,091 - INFO - Found 46 new posts
+2026-01-18 10:20:00,107 - INFO - Total posts: 4419
+2026-01-18 10:20:01,108 - INFO - Page 102: http://www.vermelhodepaixao.com.br/search?updated-max=2015-08-01T12:48:00-03:00&max-results=56&start=13765&by-date=false
+2026-01-18 10:20:01,971 - INFO - Found 49 new posts
+2026-01-18 10:20:01,987 - INFO - Total posts: 4468
+2026-01-18 10:20:02,997 - INFO - Page 103: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-26T21:22:00-03:00&max-results=56&start=13821&by-date=false
+2026-01-18 10:20:03,976 - INFO - Found 52 new posts
+2026-01-18 10:20:03,992 - INFO - Total posts: 4520
+2026-01-18 10:20:05,006 - INFO - Page 104: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-21T18:22:00-03:00&max-results=56&start=13877&by-date=false
+2026-01-18 10:20:05,937 - INFO - Found 48 new posts
+2026-01-18 10:20:05,951 - INFO - Total posts: 4568
+2026-01-18 10:20:06,955 - INFO - Page 105: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-16T18:59:00-03:00&max-results=56&start=13933&by-date=false
+2026-01-18 10:20:07,884 - INFO - Found 52 new posts
+2026-01-18 10:20:07,900 - INFO - Total posts: 4620
+2026-01-18 10:20:08,118 - INFO - Checkpoint saved: checkpoint_105.json
+2026-01-18 10:20:09,128 - INFO - Page 106: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-13T23:00:00-03:00&max-results=56&start=13986&by-date=false
+2026-01-18 10:20:10,401 - INFO - Found 19 new posts
+2026-01-18 10:20:10,412 - INFO - Total posts: 4639
+2026-01-18 10:20:11,424 - INFO - Page 107: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-12T18:25:00-03:00&max-results=56&start=14006&by-date=false
+2026-01-18 10:20:12,381 - INFO - Found 48 new posts
+2026-01-18 10:20:12,398 - INFO - Total posts: 4687
+2026-01-18 10:20:13,409 - INFO - Page 108: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-08T14:16:00-03:00&max-results=56&start=14062&by-date=false
+2026-01-18 10:20:14,310 - INFO - Found 45 new posts
+2026-01-18 10:20:14,326 - INFO - Total posts: 4732
+2026-01-18 10:20:15,332 - INFO - Page 109: http://www.vermelhodepaixao.com.br/search?updated-max=2015-07-02T11:50:00-03:00&max-results=56&start=14118&by-date=false
+2026-01-18 10:20:16,491 - INFO - Found 48 new posts
+2026-01-18 10:20:16,508 - INFO - Total posts: 4780
+2026-01-18 10:20:17,511 - INFO - Page 110: http://www.vermelhodepaixao.com.br/search?updated-max=2015-06-27T13:33:00-03:00&max-results=56&start=14174&by-date=false
+2026-01-18 10:20:18,477 - INFO - Found 48 new posts
+2026-01-18 10:20:18,494 - INFO - Total posts: 4828
+2026-01-18 10:20:18,707 - INFO - Checkpoint saved: checkpoint_110.json
+2026-01-18 10:20:19,717 - INFO - Page 111: http://www.vermelhodepaixao.com.br/search?updated-max=2015-06-22T06:56:00-03:00&max-results=56&start=14230&by-date=false
+2026-01-18 10:20:20,563 - INFO - Found 51 new posts
+2026-01-18 10:20:20,577 - INFO - Total posts: 4879
+2026-01-18 10:20:21,589 - INFO - Page 112: http://www.vermelhodepaixao.com.br/search?updated-max=2015-06-16T10:44:00-03:00&max-results=56&start=14286&by-date=false
+2026-01-18 10:20:22,416 - INFO - Found 45 new posts
+2026-01-18 10:20:22,432 - INFO - Total posts: 4924
+2026-01-18 10:20:23,446 - INFO - Page 113: http://www.vermelhodepaixao.com.br/search?updated-max=2015-06-08T17:03:00-03:00&max-results=56&start=14342&by-date=false
+2026-01-18 10:20:24,866 - INFO - Found 32 new posts
+2026-01-18 10:20:24,879 - INFO - Total posts: 4956
+2026-01-18 10:20:25,891 - INFO - Page 114: http://www.vermelhodepaixao.com.br/search?updated-max=2015-06-03T18:28:00-03:00&max-results=56&start=14380&by-date=false
+2026-01-18 10:20:26,966 - INFO - Found 49 new posts
+2026-01-18 10:20:26,983 - INFO - Total posts: 5005
+2026-01-18 10:20:27,995 - INFO - Page 115: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-29T13:41:00-03:00&max-results=56&start=14436&by-date=false
+2026-01-18 10:20:28,883 - INFO - Found 50 new posts
+2026-01-18 10:20:28,898 - INFO - Total posts: 5055
+2026-01-18 10:20:29,051 - INFO - Checkpoint saved: checkpoint_115.json
+2026-01-18 10:20:30,057 - INFO - Page 116: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-25T11:20:00-03:00&max-results=56&start=14492&by-date=false
+2026-01-18 10:20:30,951 - INFO - Found 48 new posts
+2026-01-18 10:20:30,967 - INFO - Total posts: 5103
+2026-01-18 10:20:31,969 - INFO - Page 117: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-21T10:41:00-03:00&max-results=56&start=14548&by-date=false
+2026-01-18 10:20:33,190 - INFO - Found 51 new posts
+2026-01-18 10:20:33,205 - INFO - Total posts: 5154
+2026-01-18 10:20:34,218 - INFO - Page 118: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-18T08:21:00-03:00&max-results=56&start=14604&by-date=false
+2026-01-18 10:20:35,128 - INFO - Found 50 new posts
+2026-01-18 10:20:35,146 - INFO - Total posts: 5204
+2026-01-18 10:20:36,152 - INFO - Page 119: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-13T14:52:00-03:00&max-results=56&start=14660&by-date=false
+2026-01-18 10:20:37,191 - INFO - Found 51 new posts
+2026-01-18 10:20:37,217 - INFO - Total posts: 5255
+2026-01-18 10:20:38,219 - INFO - Page 120: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-08T17:54:00-03:00&max-results=56&start=14716&by-date=false
+2026-01-18 10:20:39,659 - INFO - Found 51 new posts
+2026-01-18 10:20:39,675 - INFO - Total posts: 5306
+2026-01-18 10:20:39,975 - INFO - Checkpoint saved: checkpoint_120.json
+2026-01-18 10:20:40,985 - INFO - Page 121: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-04T11:32:00-03:00&max-results=56&start=14770&by-date=false
+2026-01-18 10:20:41,658 - INFO - Found 11 new posts
+2026-01-18 10:20:41,668 - INFO - Total posts: 5317
+2026-01-18 10:20:42,671 - INFO - Page 122: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-03T16:30:00-03:00&max-results=56&start=14782&by-date=false
+2026-01-18 10:20:43,284 - INFO - Found 5 new posts
+2026-01-18 10:20:43,291 - INFO - Total posts: 5322
+2026-01-18 10:20:44,304 - INFO - Page 123: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-03T10:27:00-03:00&max-results=56&start=14787&by-date=false
+2026-01-18 10:20:44,929 - INFO - Found 4 new posts
+2026-01-18 10:20:44,937 - INFO - Total posts: 5326
+2026-01-18 10:20:45,945 - INFO - Page 124: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-03T00:17:00-03:00&max-results=56&start=14792&by-date=false
+2026-01-18 10:20:46,607 - INFO - Found 17 new posts
+2026-01-18 10:20:46,617 - INFO - Total posts: 5343
+2026-01-18 10:20:47,619 - INFO - Page 125: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-01T21:31:00-03:00&max-results=56&start=14809&by-date=false
+2026-01-18 10:20:48,258 - INFO - Found 11 new posts
+2026-01-18 10:20:48,267 - INFO - Total posts: 5354
+2026-01-18 10:20:48,462 - INFO - Checkpoint saved: checkpoint_125.json
+2026-01-18 10:20:49,465 - INFO - Page 126: http://www.vermelhodepaixao.com.br/search?updated-max=2015-05-01T07:30:00-03:00&max-results=56&start=14820&by-date=false
+2026-01-18 10:20:50,502 - INFO - Found 47 new posts
+2026-01-18 10:20:50,516 - INFO - Total posts: 5401
+2026-01-18 10:20:51,517 - INFO - Page 127: http://www.vermelhodepaixao.com.br/search?updated-max=2015-04-25T19:08:00-03:00&max-results=56&start=14876&by-date=false
+2026-01-18 10:20:52,428 - INFO - Found 47 new posts
+2026-01-18 10:20:52,444 - INFO - Total posts: 5448
+2026-01-18 10:20:53,457 - INFO - Page 128: http://www.vermelhodepaixao.com.br/search?updated-max=2015-04-19T21:18:00-03:00&max-results=56&start=14932&by-date=false
+2026-01-18 10:20:54,355 - INFO - Found 50 new posts
+2026-01-18 10:20:54,373 - INFO - Total posts: 5498
+2026-01-18 10:20:55,378 - INFO - Page 129: http://www.vermelhodepaixao.com.br/search?updated-max=2015-04-14T21:52:00-03:00&max-results=56&start=14988&by-date=false
+2026-01-18 10:20:56,367 - INFO - Found 48 new posts
+2026-01-18 10:20:56,384 - INFO - Total posts: 5546
+2026-01-18 10:20:57,392 - INFO - Page 130: http://www.vermelhodepaixao.com.br/search?updated-max=2015-04-09T09:42:00-03:00&max-results=56&start=15044&by-date=false
+2026-01-18 10:20:58,335 - INFO - Found 21 new posts
+2026-01-18 10:20:58,346 - INFO - Total posts: 5567
+2026-01-18 10:20:58,524 - INFO - Checkpoint saved: checkpoint_130.json
+2026-01-18 10:20:59,529 - INFO - Page 131: http://www.vermelhodepaixao.com.br/search?updated-max=2015-04-07T15:30:00-03:00&max-results=56&start=15066&by-date=false
+2026-01-18 10:21:00,574 - INFO - Found 47 new posts
+2026-01-18 10:21:00,590 - INFO - Total posts: 5614
+2026-01-18 10:21:01,596 - INFO - Page 132: http://www.vermelhodepaixao.com.br/search?updated-max=2015-04-02T18:41:00-03:00&max-results=56&start=15122&by-date=false
+2026-01-18 10:21:02,467 - INFO - Found 45 new posts
+2026-01-18 10:21:02,481 - INFO - Total posts: 5659
+2026-01-18 10:21:03,495 - INFO - Page 133: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-30T12:57:00-03:00&max-results=56&start=15170&by-date=false
+2026-01-18 10:21:04,301 - INFO - Found 29 new posts
+2026-01-18 10:21:04,314 - INFO - Total posts: 5688
+2026-01-18 10:21:05,314 - INFO - Page 134: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-27T19:16:00-03:00&max-results=56&start=15205&by-date=false
+2026-01-18 10:21:06,746 - INFO - Found 26 new posts
+2026-01-18 10:21:06,757 - INFO - Total posts: 5714
+2026-01-18 10:21:07,773 - INFO - Page 135: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-25T18:00:00-03:00&max-results=56&start=15235&by-date=false
+2026-01-18 10:21:08,429 - INFO - Found 14 new posts
+2026-01-18 10:21:08,440 - INFO - Total posts: 5728
+2026-01-18 10:21:08,745 - INFO - Checkpoint saved: checkpoint_135.json
+2026-01-18 10:21:09,757 - INFO - Page 136: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-24T15:26:00-03:00&max-results=56&start=15250&by-date=false
+2026-01-18 10:21:10,586 - INFO - Found 24 new posts
+2026-01-18 10:21:10,599 - INFO - Total posts: 5752
+2026-01-18 10:21:11,601 - INFO - Page 137: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-23T09:30:00-03:00&max-results=56&start=15280&by-date=false
+2026-01-18 10:21:12,413 - INFO - Found 34 new posts
+2026-01-18 10:21:12,427 - INFO - Total posts: 5786
+2026-01-18 10:21:13,427 - INFO - Page 138: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-20T16:34:00-03:00&max-results=56&start=15315&by-date=false
+2026-01-18 10:21:14,182 - INFO - Found 14 new posts
+2026-01-18 10:21:14,192 - INFO - Total posts: 5800
+2026-01-18 10:21:15,199 - INFO - Page 139: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-19T10:00:00-03:00&max-results=56&start=15330&by-date=false
+2026-01-18 10:21:16,326 - INFO - Found 31 new posts
+2026-01-18 10:21:16,340 - INFO - Total posts: 5831
+2026-01-18 10:21:17,350 - INFO - Page 140: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-16T17:06:00-03:00&max-results=56&start=15366&by-date=false
+2026-01-18 10:21:18,428 - INFO - Found 51 new posts
+2026-01-18 10:21:18,446 - INFO - Total posts: 5882
+2026-01-18 10:21:18,806 - INFO - Checkpoint saved: checkpoint_140.json
+2026-01-18 10:21:19,817 - INFO - Page 141: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-12T09:24:00-03:00&max-results=56&start=15422&by-date=false
+2026-01-18 10:21:20,900 - INFO - Found 37 new posts
+2026-01-18 10:21:20,915 - INFO - Total posts: 5919
+2026-01-18 10:21:21,922 - INFO - Page 142: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-09T23:00:00-03:00&max-results=56&start=15463&by-date=false
+2026-01-18 10:21:22,979 - INFO - Found 42 new posts
+2026-01-18 10:21:22,994 - INFO - Total posts: 5961
+2026-01-18 10:21:24,004 - INFO - Page 143: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-06T14:27:00-03:00&max-results=56&start=15509&by-date=false
+2026-01-18 10:21:25,075 - INFO - Found 53 new posts
+2026-01-18 10:21:25,116 - INFO - Total posts: 6014
+2026-01-18 10:21:26,120 - INFO - Page 144: http://www.vermelhodepaixao.com.br/search?updated-max=2015-03-02T14:00:00-03:00&max-results=56&start=15565&by-date=false
+2026-01-18 10:21:27,222 - INFO - Found 51 new posts
+2026-01-18 10:21:27,238 - INFO - Total posts: 6065
+2026-01-18 10:21:28,244 - INFO - Page 145: http://www.vermelhodepaixao.com.br/search?updated-max=2015-02-26T05:48:00-03:00&max-results=56&start=15621&by-date=false
+2026-01-18 10:21:29,029 - INFO - Found 30 new posts
+2026-01-18 10:21:29,043 - INFO - Total posts: 6095
+2026-01-18 10:21:29,266 - INFO - Checkpoint saved: checkpoint_145.json
+2026-01-18 10:21:30,280 - INFO - Page 146: http://www.vermelhodepaixao.com.br/search?updated-max=2015-02-23T18:20:00-03:00&max-results=56&start=15653&by-date=false
+2026-01-18 10:21:31,239 - INFO - Found 53 new posts
+2026-01-18 10:21:31,256 - INFO - Total posts: 6148
+2026-01-18 10:21:32,262 - INFO - Page 147: http://www.vermelhodepaixao.com.br/search?updated-max=2015-02-20T03:21:00-03:00&max-results=56&start=15709&by-date=false
+2026-01-18 10:21:33,962 - INFO - Found 51 new posts
+2026-01-18 10:21:33,978 - INFO - Total posts: 6199
+2026-01-18 10:21:34,987 - INFO - Page 148: http://www.vermelhodepaixao.com.br/search?updated-max=2015-02-13T18:44:00-03:00&max-results=56&start=15765&by-date=false
+2026-01-18 10:21:35,834 - INFO - Found 50 new posts
+2026-01-18 10:21:35,848 - INFO - Total posts: 6249
+2026-01-18 10:21:36,850 - INFO - Page 149: http://www.vermelhodepaixao.com.br/search?updated-max=2015-02-08T21:12:00-03:00&max-results=56&start=15821&by-date=false
+2026-01-18 10:21:38,087 - INFO - Found 53 new posts
+2026-01-18 10:21:38,104 - INFO - Total posts: 6302
+2026-01-18 10:21:39,115 - INFO - Page 150: http://www.vermelhodepaixao.com.br/search?updated-max=2015-02-03T17:37:00-03:00&max-results=56&start=15877&by-date=false
+2026-01-18 10:21:40,163 - INFO - Found 53 new posts
+2026-01-18 10:21:40,180 - INFO - Total posts: 6355
+2026-01-18 10:21:40,537 - INFO - Checkpoint saved: checkpoint_150.json
+2026-01-18 10:21:41,542 - INFO - Page 151: http://www.vermelhodepaixao.com.br/search?updated-max=2015-01-30T18:43:00-03:00&max-results=56&start=15933&by-date=false
+2026-01-18 10:21:42,556 - INFO - Found 51 new posts
+2026-01-18 10:21:42,580 - INFO - Total posts: 6406
+2026-01-18 10:21:43,589 - INFO - Page 152: http://www.vermelhodepaixao.com.br/search?updated-max=2015-01-23T19:50:00-03:00&max-results=56&start=15989&by-date=false
+2026-01-18 10:21:44,461 - INFO - Found 56 new posts
+2026-01-18 10:21:44,484 - INFO - Total posts: 6462
+2026-01-18 10:21:45,491 - INFO - Page 153: http://www.vermelhodepaixao.com.br/search?updated-max=2015-01-16T08:22:00-03:00&max-results=56&start=16045&by-date=false
+2026-01-18 10:21:46,742 - INFO - Found 54 new posts
+2026-01-18 10:21:46,758 - INFO - Total posts: 6516
+2026-01-18 10:21:47,763 - INFO - Page 154: http://www.vermelhodepaixao.com.br/search?updated-max=2015-01-08T05:12:00-03:00&max-results=56&start=16101&by-date=false
+2026-01-18 10:21:48,814 - INFO - Found 56 new posts
+2026-01-18 10:21:48,831 - INFO - Total posts: 6572
+2026-01-18 10:21:49,844 - INFO - Page 155: http://www.vermelhodepaixao.com.br/search?updated-max=2014-12-29T17:50:00-03:00&max-results=56&start=16157&by-date=false
+2026-01-18 10:21:50,890 - INFO - Found 56 new posts
+2026-01-18 10:21:50,906 - INFO - Total posts: 6628
+2026-01-18 10:21:51,361 - INFO - Checkpoint saved: checkpoint_155.json
+2026-01-18 10:21:52,364 - INFO - Page 156: http://www.vermelhodepaixao.com.br/search?updated-max=2014-12-23T09:09:00-03:00&max-results=56&start=16213&by-date=false
+2026-01-18 10:21:54,084 - INFO - Found 34 new posts
+2026-01-18 10:21:54,099 - INFO - Total posts: 6662
+2026-01-18 10:21:55,109 - INFO - Page 157: http://www.vermelhodepaixao.com.br/search?updated-max=2014-12-15T09:42:00-03:00&max-results=56&start=16247&by-date=false
+2026-01-18 10:21:56,141 - INFO - Found 31 new posts
+2026-01-18 10:21:56,152 - INFO - Total posts: 6693
+2026-01-18 10:21:57,154 - INFO - Page 158: http://www.vermelhodepaixao.com.br/search?updated-max=2014-12-08T11:47:00-03:00&max-results=56&start=16278&by-date=false
+2026-01-18 10:21:58,032 - INFO - Found 22 new posts
+2026-01-18 10:21:58,046 - INFO - Total posts: 6715
+2026-01-18 10:21:59,057 - INFO - Page 159: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-30T12:05:00-03:00&max-results=56&start=16301&by-date=false
+2026-01-18 10:21:59,990 - INFO - Found 44 new posts
+2026-01-18 10:22:00,021 - INFO - Total posts: 6759
+2026-01-18 10:22:01,031 - INFO - Page 160: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-24T18:30:00-03:00&max-results=56&start=16346&by-date=false
+2026-01-18 10:22:01,757 - INFO - Found 6 new posts
+2026-01-18 10:22:01,765 - INFO - Total posts: 6765
+2026-01-18 10:22:02,162 - INFO - Checkpoint saved: checkpoint_160.json
+2026-01-18 10:22:03,165 - INFO - Page 161: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-24T10:01:00-03:00&max-results=56&start=16353&by-date=false
+2026-01-18 10:22:04,188 - INFO - Found 55 new posts
+2026-01-18 10:22:04,205 - INFO - Total posts: 6820
+2026-01-18 10:22:05,207 - INFO - Page 162: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-18T16:00:00-03:00&max-results=56&start=16409&by-date=false
+2026-01-18 10:22:06,161 - INFO - Found 52 new posts
+2026-01-18 10:22:06,176 - INFO - Total posts: 6872
+2026-01-18 10:22:07,190 - INFO - Page 163: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-13T10:35:00-03:00&max-results=56&start=16465&by-date=false
+2026-01-18 10:22:08,299 - INFO - Found 52 new posts
+2026-01-18 10:22:08,314 - INFO - Total posts: 6924
+2026-01-18 10:22:09,319 - INFO - Page 164: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-06T11:34:00-03:00&max-results=56&start=16521&by-date=false
+2026-01-18 10:22:10,275 - INFO - Found 51 new posts
+2026-01-18 10:22:10,289 - INFO - Total posts: 6975
+2026-01-18 10:22:11,299 - INFO - Page 165: http://www.vermelhodepaixao.com.br/search?updated-max=2014-11-01T18:20:00-03:00&max-results=56&start=16577&by-date=false
+2026-01-18 10:22:12,360 - INFO - Found 53 new posts
+2026-01-18 10:22:12,391 - INFO - Total posts: 7028
+2026-01-18 10:22:13,305 - INFO - Checkpoint saved: checkpoint_165.json
+2026-01-18 10:22:14,315 - INFO - Page 166: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-27T13:27:00-03:00&max-results=56&start=16633&by-date=false
+2026-01-18 10:22:15,288 - INFO - Found 31 new posts
+2026-01-18 10:22:15,301 - INFO - Total posts: 7059
+2026-01-18 10:22:16,312 - INFO - Page 167: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-23T14:00:00-03:00&max-results=56&start=16668&by-date=false
+2026-01-18 10:22:17,688 - INFO - Found 33 new posts
+2026-01-18 10:22:17,702 - INFO - Total posts: 7092
+2026-01-18 10:22:18,713 - INFO - Page 168: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-20T17:00:00-03:00&max-results=56&start=16706&by-date=false
+2026-01-18 10:22:19,588 - INFO - Found 32 new posts
+2026-01-18 10:22:19,600 - INFO - Total posts: 7124
+2026-01-18 10:22:20,603 - INFO - Page 169: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-16T19:49:00-03:00&max-results=56&start=16742&by-date=false
+2026-01-18 10:22:21,310 - INFO - Found 24 new posts
+2026-01-18 10:22:21,322 - INFO - Total posts: 7148
+2026-01-18 10:22:22,331 - INFO - Page 170: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-14T14:44:00-03:00&max-results=56&start=16769&by-date=false
+2026-01-18 10:22:23,186 - INFO - Found 31 new posts
+2026-01-18 10:22:23,198 - INFO - Total posts: 7179
+2026-01-18 10:22:23,538 - INFO - Checkpoint saved: checkpoint_170.json
+2026-01-18 10:22:24,544 - INFO - Page 171: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-11T06:35:00-03:00&max-results=56&start=16802&by-date=false
+2026-01-18 10:22:25,600 - INFO - Found 49 new posts
+2026-01-18 10:22:25,615 - INFO - Total posts: 7228
+2026-01-18 10:22:26,627 - INFO - Page 172: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-06T06:06:00-03:00&max-results=56&start=16858&by-date=false
+2026-01-18 10:22:27,163 - INFO - Found 6 new posts
+2026-01-18 10:22:27,171 - INFO - Total posts: 7234
+2026-01-18 10:22:28,177 - INFO - Page 173: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-05T02:30:00-03:00&max-results=56&start=16864&by-date=false
+2026-01-18 10:22:28,806 - INFO - Found 13 new posts
+2026-01-18 10:22:28,816 - INFO - Total posts: 7247
+2026-01-18 10:22:29,831 - INFO - Page 174: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-04T14:00:00-03:00&max-results=56&start=16879&by-date=false
+2026-01-18 10:22:30,536 - INFO - Found 9 new posts
+2026-01-18 10:22:30,544 - INFO - Total posts: 7256
+2026-01-18 10:22:31,559 - INFO - Page 175: http://www.vermelhodepaixao.com.br/search?updated-max=2014-10-03T19:00:00-03:00&max-results=56&start=16888&by-date=false
+2026-01-18 10:22:32,609 - INFO - Found 53 new posts
+2026-01-18 10:22:32,623 - INFO - Total posts: 7309
+2026-01-18 10:22:33,104 - INFO - Checkpoint saved: checkpoint_175.json
+2026-01-18 10:22:34,116 - INFO - Page 176: http://www.vermelhodepaixao.com.br/search?updated-max=2014-09-26T21:31:00-03:00&max-results=56&start=16944&by-date=false
+2026-01-18 10:22:35,009 - INFO - Found 53 new posts
+2026-01-18 10:22:35,025 - INFO - Total posts: 7362
+2026-01-18 10:22:36,028 - INFO - Page 177: http://www.vermelhodepaixao.com.br/search?updated-max=2014-09-21T09:57:00-03:00&max-results=56&start=17000&by-date=false
+2026-01-18 10:22:36,936 - INFO - Found 33 new posts
+2026-01-18 10:22:36,948 - INFO - Total posts: 7395
+2026-01-18 10:22:37,962 - INFO - Page 178: http://www.vermelhodepaixao.com.br/search?updated-max=2014-09-18T10:23:00-03:00&max-results=56&start=17035&by-date=false
+2026-01-18 10:22:39,073 - INFO - Found 53 new posts
+2026-01-18 10:22:39,090 - INFO - Total posts: 7448
+2026-01-18 10:22:40,092 - INFO - Page 179: http://www.vermelhodepaixao.com.br/search?updated-max=2014-09-12T11:14:00-03:00&max-results=56&start=17091&by-date=false
+2026-01-18 10:22:41,196 - INFO - Found 53 new posts
+2026-01-18 10:22:41,214 - INFO - Total posts: 7501
+2026-01-18 10:22:42,221 - INFO - Page 180: http://www.vermelhodepaixao.com.br/search?updated-max=2014-09-08T08:46:00-03:00&max-results=56&start=17147&by-date=false
+2026-01-18 10:22:43,244 - INFO - Found 53 new posts
+2026-01-18 10:22:43,261 - INFO - Total posts: 7554
+2026-01-18 10:22:43,495 - INFO - Checkpoint saved: checkpoint_180.json
+2026-01-18 10:22:44,497 - INFO - Page 181: http://www.vermelhodepaixao.com.br/search?updated-max=2014-09-04T00:15:00-03:00&max-results=56&start=17203&by-date=false
+2026-01-18 10:22:45,826 - INFO - Found 41 new posts
+2026-01-18 10:22:45,840 - INFO - Total posts: 7595
+2026-01-18 10:22:46,848 - INFO - Page 182: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-30T11:53:00-03:00&max-results=56&start=17244&by-date=false
+2026-01-18 10:22:47,501 - INFO - Found 10 new posts
+2026-01-18 10:22:47,510 - INFO - Total posts: 7605
+2026-01-18 10:22:48,519 - INFO - Page 183: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-29T22:30:00-03:00&max-results=56&start=17255&by-date=false
+2026-01-18 10:22:49,087 - INFO - Found 9 new posts
+2026-01-18 10:22:49,096 - INFO - Total posts: 7614
+2026-01-18 10:22:50,099 - INFO - Page 184: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-29T20:00:00-03:00&max-results=56&start=17264&by-date=false
+2026-01-18 10:22:51,508 - INFO - Found 53 new posts
+2026-01-18 10:22:51,523 - INFO - Total posts: 7667
+2026-01-18 10:22:52,526 - INFO - Page 185: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-25T17:39:00-03:00&max-results=56&start=17320&by-date=false
+2026-01-18 10:22:53,529 - INFO - Found 52 new posts
+2026-01-18 10:22:53,543 - INFO - Total posts: 7719
+2026-01-18 10:22:53,767 - INFO - Checkpoint saved: checkpoint_185.json
+2026-01-18 10:22:54,771 - INFO - Page 186: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-20T08:25:00-03:00&max-results=56&start=17376&by-date=false
+2026-01-18 10:22:55,712 - INFO - Found 50 new posts
+2026-01-18 10:22:55,726 - INFO - Total posts: 7769
+2026-01-18 10:22:56,732 - INFO - Page 187: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-16T08:29:00-03:00&max-results=56&start=17432&by-date=false
+2026-01-18 10:22:57,800 - INFO - Found 54 new posts
+2026-01-18 10:22:57,816 - INFO - Total posts: 7823
+2026-01-18 10:22:58,819 - INFO - Page 188: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-11T15:27:00-03:00&max-results=56&start=17488&by-date=false
+2026-01-18 10:22:59,799 - INFO - Found 54 new posts
+2026-01-18 10:22:59,816 - INFO - Total posts: 7877
+2026-01-18 10:23:00,820 - INFO - Page 189: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-06T19:36:00-03:00&max-results=56&start=17544&by-date=false
+2026-01-18 10:23:01,882 - INFO - Found 52 new posts
+2026-01-18 10:23:01,898 - INFO - Total posts: 7929
+2026-01-18 10:23:02,905 - INFO - Page 190: http://www.vermelhodepaixao.com.br/search?updated-max=2014-08-02T06:19:00-03:00&max-results=56&start=17600&by-date=false
+2026-01-18 10:23:04,022 - INFO - Found 53 new posts
+2026-01-18 10:23:04,037 - INFO - Total posts: 7982
+2026-01-18 10:23:04,302 - INFO - Checkpoint saved: checkpoint_190.json
+2026-01-18 10:23:05,314 - INFO - Page 191: http://www.vermelhodepaixao.com.br/search?updated-max=2014-07-26T11:24:00-03:00&max-results=56&start=17656&by-date=false
+2026-01-18 10:23:06,659 - INFO - Found 47 new posts
+2026-01-18 10:23:06,674 - INFO - Total posts: 8029
+2026-01-18 10:23:07,690 - INFO - Page 192: http://www.vermelhodepaixao.com.br/search?updated-max=2014-07-22T09:09:00-03:00&max-results=56&start=17707&by-date=false
+2026-01-18 10:23:08,628 - INFO - Found 53 new posts
+2026-01-18 10:23:08,644 - INFO - Total posts: 8082
+2026-01-18 10:23:09,650 - INFO - Page 193: http://www.vermelhodepaixao.com.br/search?updated-max=2014-07-16T05:05:00-03:00&max-results=56&start=17763&by-date=false
+2026-01-18 10:23:10,526 - INFO - Found 34 new posts
+2026-01-18 10:23:10,540 - INFO - Total posts: 8116
+2026-01-18 10:23:11,550 - INFO - Page 194: http://www.vermelhodepaixao.com.br/search?updated-max=2014-07-12T10:02:00-03:00&max-results=56&start=17801&by-date=false
+2026-01-18 10:23:12,421 - INFO - Found 37 new posts
+2026-01-18 10:23:12,432 - INFO - Total posts: 8153
+2026-01-18 10:23:13,447 - INFO - Page 195: http://www.vermelhodepaixao.com.br/search?updated-max=2014-07-08T06:21:00-03:00&max-results=56&start=17838&by-date=false
+2026-01-18 10:23:14,225 - INFO - Found 7 new posts
+2026-01-18 10:23:14,233 - INFO - Total posts: 8160
+2026-01-18 10:23:14,576 - INFO - Checkpoint saved: checkpoint_195.json
+2026-01-18 10:23:15,578 - INFO - Page 196: http://www.vermelhodepaixao.com.br/search?updated-max=2014-07-05T09:56:00-03:00&max-results=56&start=17847&by-date=false
+2026-01-18 10:23:16,481 - INFO - Found 40 new posts
+2026-01-18 10:23:16,494 - INFO - Total posts: 8200
+2026-01-18 10:23:17,510 - INFO - Page 197: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-30T08:31:00-03:00&max-results=56&start=17888&by-date=false
+2026-01-18 10:23:18,454 - INFO - Found 41 new posts
+2026-01-18 10:23:18,468 - INFO - Total posts: 8241
+2026-01-18 10:23:19,474 - INFO - Page 198: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-26T05:48:00-03:00&max-results=56&start=17929&by-date=false
+2026-01-18 12:03:47,433 - INFO - Loaded 8592 posts from materias_backup.json
+2026-01-18 12:03:47,964 - INFO - Loaded 23 additional posts from checkpoint_195.json
+2026-01-18 12:04:05,629 - INFO - Page 1: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-26T05:48:00-03:00&max-results=56&start=17929&by-date=false
+2026-01-18 12:04:06,616 - INFO - New oldest year found: 2014
+2026-01-18 12:04:06,671 - INFO - Found 0 new posts
+2026-01-18 12:04:06,682 - INFO - Page 1: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:09,807 - INFO - Page 2: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-21T17:16:00-03:00&max-results=56&start=17955&by-date=false
+2026-01-18 12:04:10,712 - INFO - Found 0 new posts
+2026-01-18 12:04:10,723 - INFO - Page 2: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:14,724 - INFO - Page 3: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-20T10:51:00-03:00&max-results=56&start=17982&by-date=false
+2026-01-18 12:04:15,882 - INFO - Found 0 new posts
+2026-01-18 12:04:15,898 - INFO - Page 3: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:18,298 - INFO - Page 4: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-12T15:42:00-03:00&max-results=56&start=18033&by-date=false
+2026-01-18 12:04:19,021 - INFO - Found 0 new posts
+2026-01-18 12:04:19,038 - INFO - Page 4: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:22,890 - INFO - Page 5: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-02T10:03:00-03:00&max-results=56&start=18089&by-date=false
+2026-01-18 12:04:23,661 - INFO - Found 0 new posts
+2026-01-18 12:04:23,676 - INFO - Page 5: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:25,768 - INFO - Page 6: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-27T17:54:00-03:00&max-results=56&start=18145&by-date=false
+2026-01-18 12:04:26,477 - INFO - Found 0 new posts
+2026-01-18 12:04:26,493 - INFO - Page 6: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:28,952 - INFO - Page 7: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-22T14:25:00-03:00&max-results=56&start=18201&by-date=false
+2026-01-18 12:04:29,684 - INFO - Found 0 new posts
+2026-01-18 12:04:29,698 - INFO - Page 7: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:32,661 - INFO - Page 8: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-16T21:10:00-03:00&max-results=56&start=18257&by-date=false
+2026-01-18 12:04:33,479 - INFO - Found 0 new posts
+2026-01-18 12:04:33,496 - INFO - Page 8: 8615 total posts | Oldest: 2014 | Time: 0h0m
+2026-01-18 12:04:38,261 - INFO - Page 9: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-11T09:09:00-03:00&max-results=56&start=18313&by-date=false
+2026-01-18 12:12:04,535 - INFO - After deduplication: 8592 posts

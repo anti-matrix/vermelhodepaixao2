@@ -1,0 +1,32 @@
+2026-01-18 13:51:37,841 - INFO - Loaded 0 posts from materias.js
+2026-01-18 13:51:37,997 - INFO - Loaded additional 8592 posts from backup
+2026-01-18 13:53:16,740 - INFO - Page 1: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-26T05:48:00-03:00&max-results=56&start=17929&by-date=false
+2026-01-18 13:53:18,007 - INFO - New oldest year found: 2014
+2026-01-18 13:53:18,061 - INFO - Found 0 new posts
+2026-01-18 13:53:18,071 - INFO - Total posts: 8592
+2026-01-18 13:53:19,968 - INFO - Page 2: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-21T17:16:00-03:00&max-results=56&start=17955&by-date=false
+2026-01-18 13:53:20,597 - INFO - Found 0 new posts
+2026-01-18 13:53:20,609 - INFO - Total posts: 8592
+2026-01-18 13:53:22,084 - INFO - Page 3: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-20T10:51:00-03:00&max-results=56&start=17982&by-date=false
+2026-01-18 13:53:22,856 - INFO - Found 0 new posts
+2026-01-18 13:53:22,872 - INFO - Total posts: 8592
+2026-01-18 13:53:25,747 - INFO - Page 4: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-12T15:42:00-03:00&max-results=56&start=18033&by-date=false
+2026-01-18 13:53:26,477 - INFO - Found 0 new posts
+2026-01-18 13:53:26,493 - INFO - Total posts: 8592
+2026-01-18 13:53:28,774 - INFO - Page 5: http://www.vermelhodepaixao.com.br/search?updated-max=2014-06-02T10:03:00-03:00&max-results=56&start=18089&by-date=false
+2026-01-18 13:53:29,517 - INFO - Found 0 new posts
+2026-01-18 13:53:29,533 - INFO - Total posts: 8592
+2026-01-18 13:53:30,543 - INFO - Page 6: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-27T17:54:00-03:00&max-results=56&start=18145&by-date=false
+2026-01-18 13:53:31,265 - INFO - Found 0 new posts
+2026-01-18 13:53:31,281 - INFO - Total posts: 8592
+2026-01-18 13:53:33,796 - INFO - Page 7: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-22T14:25:00-03:00&max-results=56&start=18201&by-date=false
+2026-01-18 13:53:34,489 - INFO - Found 0 new posts
+2026-01-18 13:53:34,509 - INFO - Total posts: 8592
+2026-01-18 13:53:36,446 - INFO - Page 8: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-16T21:10:00-03:00&max-results=56&start=18257&by-date=false
+2026-01-18 13:53:37,296 - INFO - Found 0 new posts
+2026-01-18 13:53:37,341 - INFO - Total posts: 8592
+2026-01-18 13:53:40,228 - INFO - Page 9: http://www.vermelhodepaixao.com.br/search?updated-max=2014-05-11T09:09:00-03:00&max-results=56&start=18313&by-date=false
+2026-01-18 14:26:26,747 - INFO - After deduplication: 8592 posts
+2026-01-18 14:26:27,562 - INFO - Files saved:
+2026-01-18 14:26:27,565 - INFO -   - materias.js
+2026-01-18 14:26:27,568 - INFO -   - materias_backup.json
