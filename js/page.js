@@ -1,173 +1,314 @@
+// Configuration
 const vp_width = window.innerWidth;
+const addElement = (f, c) => { f.appendChild(c); };
+const ErrorMsgs = {
+    search_noresult: 'Sua pesquisa não trouxe resultados.',
+    error404: 'Artigo não encontrado. O link pode estar incorreto ou o artigo foi removido.'
+};
 
-const addElement = (f, c) => {f.appendChild(c);};
-
-const ErrorMsgs = {search_noresult:'Sua pesquisa não trouxe resultados.',error404:'Essa página não foi encontrada.'};
-
+// Get ID from URL
 const params = new URLSearchParams(query_string);
 var idValueUrl = params.get('id');
-const pageUrl = "page.html?id=";
-const pageUrlId = pageUrl + idValueUrl; 
 
-var isearch = document.getElementById("isearch");
-
-var card_attr = ['card', 'w-50', 'border-danger', 'border-1','text-danger', 'mx-auto', 'shadow-lg', 'mt-3']; //array bootstrap card classes
-
-var alert = document.getElementById("alert_"); //ALERT SEARCH NO RESULT 
-var alert_attr = ['alert', 'hidden_', 'alert-primary', 'd-flex', 'align-items-center', 'rounded-1', 'mx-auto', 'w-50'];
-alert.setAttribute("class", alert_attr[0]);
+// DOM Elements
+var alert = document.getElementById("alert_");
 var alert_span_msg = document.getElementById("alert_msg");
+var nav = document.getElementById("nav");
 
-var nav = document.getElementById("nav"); 
-var nav_attr = ['sticky-top', 'navbar', 'navbar-expand-lg', 'navbar-light', 'bg-light', 'text-danger', 'shadow-sm']; //nav bootstrap classes
+// Responsive styling
+var card_attr = ['card', 'w-50', 'border-danger', 'border-1', 'text-danger', 'mx-auto', 'shadow-lg', 'mt-3'];
+var alert_attr = ['alert', 'hidden_', 'alert-primary', 'd-flex', 'align-items-center', 'rounded-1', 'mx-auto', 'w-50'];
+var nav_attr = ['sticky-top', 'navbar', 'navbar-expand-lg', 'navbar-light', 'bg-light', 'text-danger', 'shadow-sm'];
+
+// Apply initial classes
+alert.setAttribute("class", alert_attr[0]);
 nav.setAttribute("class", nav_attr[0]);
 
-if (vp_width > 768) { //MOBILE RESPONSIVO
+// Responsive adjustments
+if (vp_width > 768) {
     nav_attr.splice(6, 0, 'rounded-1', 'mx-2', 'mt-2', 'mb-2');
-    for (j = 1; j < nav_attr.length; j++) {
+    for (let j = 1; j < nav_attr.length; j++) {
         nav.classList.add(nav_attr[j]);
         alert.classList.add(alert_attr[j]);
-    } 
+    }
 } else {
     card_attr[1] = 'w-100';
     alert_attr[7] = 'w-100';
-    for (j = 1; j < nav_attr.length; j++) {
+    for (let j = 1; j < nav_attr.length; j++) {
         nav.classList.add(nav_attr[j]);
         alert.classList.add(alert_attr[j]);
     }
-    alert.classList.add('mt-3'); 
+    alert.classList.add('mt-3');
 }
 
-const load_content = function() {
-    for (i = 0; i < x.length; i++) {
-        //recupera conteúdo dos artigos
-        const artigo = {id:x[i]._id, titulo:x[i]._titulo, content:x[i]._conteudo, data:x[i]._data, hora:x[i]._hora, author:x[i]._autor, imgsrc:x[i]._imgsrc, imgwth:x[i]._imgwth, imghgt:x[i]._imghgt};
-        
-        if (idValueUrl == artigo.id) {
-            i = 51;
-            console.log('id encontrado');
-            console.log('i:', i)
-            console.log(pageUrlId);
-            var divmain = document.getElementById("_artigos"); //HTML MAIN
-
-            var divcards = document.createElement("div"); //BOOTSTRAP CARD
-            divcards.setAttribute("class", card_attr[0]);
-            var id_atrr = "card_" + artigo.id; 
-            divcards.setAttribute("id", id_atrr);
-            for (j = 1; j < card_attr.length; j++) {
-                divcards.classList.add(card_attr[j]);
-            }
-        
-            var cardheader = document.createElement("div"); //CARD HEADER
-            cardheader.setAttribute("class", "card-header");
-
-            var h5title = document.createElement("h5"); //CARD TITLE
-            h5title.setAttribute("class", "card-title");
-            var link_title = document.createElement("a"); //LINK TITLE 
-            link_title.setAttribute("class", "link-danger")
-            link_title.setAttribute("href", pageUrl + artigo.id);
-            var ctitle = document.createTextNode(artigo.titulo);
-
-            var img = document.createElement("img"); //IMAGEM DO ARTIGO
-            img.setAttribute("class", "card-img-top");
+// Create a single post view
+function createPostView(artigo) {
+    var divmain = document.getElementById("_artigos");
+    
+    // Clear any existing content
+    divmain.innerHTML = '';
+    
+    // Create card container
+    var divcards = document.createElement("div");
+    divcards.setAttribute("class", card_attr[0]);
+    var id_attr = "card_" + artigo.id;
+    divcards.setAttribute("id", id_attr);
+    for (let j = 1; j < card_attr.length; j++) {
+        divcards.classList.add(card_attr[j]);
+    }
+    
+    // Card header with title
+    var cardheader = document.createElement("div");
+    cardheader.setAttribute("class", "card-header");
+    
+    var h5title = document.createElement("h1"); // Changed to h1 for better SEO
+    h5title.setAttribute("class", "card-title h3 mb-0");
+    
+    var ctitle = document.createTextNode(artigo.titulo);
+    
+    // Card body with full content
+    var divcontent = document.createElement("div");
+    divcontent.setAttribute("class", "card-body");
+    
+    // Preserve line breaks in content
+    var contentParagraphs = artigo.content.split('\n').filter(p => p.trim() !== '');
+    var contentContainer = document.createElement("div");
+    
+    contentParagraphs.forEach(paragraph => {
+        var p = document.createElement("p");
+        p.setAttribute("class", "mb-3");
+        p.textContent = paragraph;
+        contentContainer.appendChild(p);
+    });
+    
+    // Card footer with metadata
+    var cardfooter = document.createElement("footer");
+    cardfooter.setAttribute("class", "card-footer text-muted bg-light");
+    
+    var divrow = document.createElement("div");
+    divrow.setAttribute("class", "row");
+    
+    var divcol = document.createElement("div");
+    divcol.setAttribute("class", "col-md-8");
+    
+    var divcol2 = document.createElement("div");
+    divcol2.setAttribute("class", "col-md-4");
+    
+    var spandate = document.createElement("span");
+    spandate.setAttribute("id", "date_");
+    spandate.setAttribute("class", "me-3");
+    var contentdate = document.createTextNode(artigo.data);
+    
+    var spantime = document.createElement("span");
+    spantime.setAttribute("id", "time_");
+    spantime.setAttribute("class", "me-3");
+    var contenttime = document.createTextNode(artigo.hora);
+    
+    var divauthor = document.createElement("div");
+    divauthor.setAttribute("class", "text-end");
+    var spanauthor = document.createElement("span");
+    spanauthor.setAttribute("id", "author_");
+    var contentauthor = document.createTextNode("Por: " + artigo.author);
+    
+    // Set page title
+    document.title = artigo.titulo + " - Vermelho de Paixão Archive";
+    
+    // Assemble the card
+    addElement(divmain, divcards);
+    addElement(divcards, cardheader);
+    addElement(cardheader, h5title);
+    addElement(h5title, ctitle);
+    
+    // Add image if available
+    if (artigo.imgsrc && artigo.imgsrc !== 'None') {
+        try {
+            var imgWrapper = document.createElement("div");
+            imgWrapper.setAttribute("class", "img-container text-center my-3");
+            
+            var img = document.createElement("img");
+            img.setAttribute("class", "card-img-top img-fluid");
             img.setAttribute("src", artigo.imgsrc);
-
-            var divcontent = document.createElement("div");
-            divcontent.setAttribute("class", "card-body");
-            var textcontent = document.createTextNode(artigo.content);
-
-            //var disqus_div = document.createElement("div");
-            //disqus_div.setAttribute("id", "disqus_thread");
-
-            var cardfooter = document.createElement("footer");
-            cardfooter.setAttribute("class", "card-footer");
-            cardfooter.classList.add("text-muted");
-
-            var divrow = document.createElement("div");
-            divrow.setAttribute("class", "row");
-            var divcol = document.createElement("div");
-            divcol.setAttribute("class", "col");
-            var divcol2 = document.createElement("div");
-            divcol2.setAttribute("class", "col");
+            img.setAttribute("alt", artigo.titulo.substring(0, 100));
+            img.setAttribute("loading", "lazy");
             
-
-            var spandate = document.createElement("span");
-            spandate.setAttribute("id", "date_");
-            var contentdate = document.createTextNode(artigo.data);
-
-            var spantime = document.createElement("span");
-            spantime.setAttribute("id", "time_");
-            spantime.setAttribute("class", "ms-1")
-            var contenttime = document.createTextNode(artigo.hora);
-
-            var divauthor = document.createElement("div");
-            divauthor.setAttribute("class", "text-end");
-            var spanauthor = document.createElement("span");
-            spanauthor.setAttribute("id", "author_")
-            var contentauthor = document.createTextNode(artigo.author);
-
-            //divmain.appendChild(divcards);
-
-            addElement(divmain, divcards); //ADD BOOTSTRAP CARD > HTML MAIN
-
-            //divcards.appendChild(cardheader);
-
-            addElement(divcards, cardheader);//ADD CARD HEADER
-
-            if (artigo.imgsrc != 'None') {
-                //divcards.appendChild(img);
-                addElement(divcards, img); //ADD IMG
+            if (artigo.imgwth && artigo.imgwth !== 'None' && !isNaN(artigo.imgwth) && artigo.imgwth > 0) {
+                img.setAttribute("width", artigo.imgwth);
             }
-
-            const elements = [divmain, divcards, divcards, cardheader, h5title, ctitle, divcards, divcontent,  textcontent, divcards, cardfooter, divrow, divcol, divrow, divcol2, divcol, spandate, divcol, spantime, spandate, contentdate, spantime, contenttime, divcol2, divauthor, spanauthor, contentauthor];
-
-            //cardheader.appendChild(h5title);
+            if (artigo.imghgt && artigo.imghgt !== 'None' && !isNaN(artigo.imghgt) && artigo.imghgt > 0) {
+                img.setAttribute("height", artigo.imghgt);
+            }
             
-            addElement(cardheader, h5title);//ADD HTML TITLE
+            addElement(imgWrapper, img);
             
-            //h5title.appendChild(ctitle);
-            
-            addElement(h5title, link_title);
-            addElement(link_title, ctitle)//ADD CONTENT TITLE
-
-            //divcards.appendChild(divcontent);
-            
-            addElement(divcards, divcontent); //add content div
-            
-            //divcontent.appendChild(textcontent);
-            
-            addElement(divcontent, textcontent); //add content
-
-            //divcards.appendChild(cardfooter);
-
-            //addElement(divcards, disqus_div);
-
-            //ADD FOOTER
-            addElement(divcards, cardfooter);
-            addElement(cardfooter, divrow);
-            addElement(divrow, divcol);
-            addElement(divrow, divcol2);
-            addElement(divcol, spandate);
-            addElement(divcol, spantime);
-            addElement(spandate, contentdate);
-            addElement(spantime, contenttime);
-            addElement(divcol2, divauthor);
-            addElement(divauthor, spanauthor);
-            addElement(spanauthor, contentauthor);
-        } else if (i == x.length-1) {
-            alert_span_msg.innerHTML = ErrorMsgs.error404;
-            alert.classList.remove("hidden_");
-            console.log(ErrorMsgs.error404);
-        }     
+            // Insert image after header
+            if (cardheader.nextSibling) {
+                cardheader.parentNode.insertBefore(imgWrapper, cardheader.nextSibling);
+            } else {
+                addElement(divcards, imgWrapper);
+            }
+        } catch (e) {
+            console.log("Error loading image:", e);
+        }
     }
-};
-var toggler = document.getElementById("navbarSupportedContent");
-var ver = toggler.classList.contains("navbar-collapse");
-function undo() {
-    console.log(toggler);
-    console.log(ver);
-    if (ver == true) {
-        toggler.classList.remove("show");
-        console.log('removendo...');
+    
+    addElement(divcards, divcontent);
+    addElement(divcontent, contentContainer);
+    addElement(divcards, cardfooter);
+    addElement(cardfooter, divrow);
+    addElement(divrow, divcol);
+    addElement(divrow, divcol2);
+    addElement(divcol, spandate);
+    addElement(spandate, contentdate);
+    addElement(divcol, spantime);
+    addElement(spantime, contenttime);
+    addElement(divcol2, divauthor);
+    addElement(divauthor, spanauthor);
+    addElement(spanauthor, contentauthor);
+    
+    // Add back button
+    // var backButton = document.createElement("a");
+    //backButton.setAttribute("href", "index.html");
+    //backButton.setAttribute("class", "btn btn-outline-danger btn-sm mt-3");
+    //backButton.innerHTML = '<i class="bi bi-arrow-left"></i> Voltar para todos os artigos';
+    
+    //var buttonContainer = document.createElement("div");
+    //buttonContainer.setAttribute("class", "text-center mb-4");
+    //addElement(buttonContainer, backButton);
+    
+    //if (divmain.firstChild) {
+    //    divmain.insertBefore(buttonContainer, divmain.firstChild);
+    //} else {
+    //    addElement(divmain, buttonContainer);
+    //}
+    
+    // Initialize Disqus comments
+    initializeDisqus(artigo.id);
+    
+    return divcards;
+}
+
+// Initialize Disqus comments
+function initializeDisqus(postId) {
+    if (typeof DISQUS !== 'undefined') {
+        DISQUS.reset({
+            reload: true,
+            config: function () {
+                this.page.url = window.location.href;
+                this.page.identifier = 'post_' + postId;
+                this.page.title = document.title;
+            }
+        });
+    } else {
+        // First time loading Disqus
+        window.disqus_config = function () {
+            this.page.url = window.location.href;
+            this.page.identifier = 'post_' + postId;
+            this.page.title = document.title;
+        };
+        
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://vermelhodepaixao2.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
     }
 }
+
+// Find and display post by ID
+function loadPostById(postId) {
+    if (!postId) {
+        showError(ErrorMsgs.error404);
+        return;
+    }
+    
+    // Convert postId to number if it's a string
+    const numericId = parseInt(postId);
+    if (isNaN(numericId)) {
+        showError(ErrorMsgs.error404);
+        return;
+    }
+    
+    // Find the post
+    const post = x.find(item => item._id === numericId);
+    
+    if (post) {
+        console.log('Post encontrado:', post._id, post._titulo);
+        
+        const artigo = {
+            id: post._id,
+            titulo: post._titulo,
+            content: post._conteudo,
+            data: post._data,
+            hora: post._hora,
+            author: post._autor,
+            imgsrc: post._imgsrc,
+            imgwth: post._imgwth,
+            imghgt: post._imghgt
+        };
+        
+        createPostView(artigo);
+        
+        // Hide any error alerts
+        alert.classList.add("hidden_");
+    } else {
+        console.log('Post não encontrado para ID:', postId);
+        showError(ErrorMsgs.error404);
+    }
+}
+
+// Show error message
+function showError(message) {
+    alert_span_msg.innerHTML = message;
+    alert.classList.remove("hidden_");
+    console.log(message);
+    
+    // Add a back button to index
+    const main = document.getElementById("_artigos");
+    main.innerHTML = '';
+    
+    const errorCard = document.createElement("div");
+    errorCard.setAttribute("class", "card mx-auto mt-5");
+    errorCard.style.maxWidth = "500px";
+    
+    errorCard.innerHTML = `
+        <div class="card-body text-center">
+            <h5 class="card-title text-danger">Artigo não encontrado</h5>
+            <p class="card-text">${message}</p>
+            <a href="index.html" class="btn btn-danger">
+                <i class="bi bi-house-door"></i> Voltar para a página inicial
+            </a>
+        </div>
+    `;
+    
+    addElement(main, errorCard);
+}
+
+// Load content when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Carregando artigo com ID:', idValueUrl);
+    
+    if (typeof x !== 'undefined' && Array.isArray(x)) {
+        console.log(`Base de dados carregada: ${x.length} artigos disponíveis`);
+        loadPostById(idValueUrl);
+    } else {
+        console.error('Erro: Array de artigos (x) não carregado');
+        showError('Erro ao carregar os artigos. Por favor, recarregue a página.');
+    }
+});
+
+// Handle search form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.querySelector('form[action="index.html"]');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            const searchInput = document.getElementById('isearch');
+            if (searchInput && searchInput.value.trim()) {
+                // Redirect to index.html with search parameter
+                this.action = `index.html?search=${encodeURIComponent(searchInput.value.trim())}`;
+            } else {
+                this.action = 'index.html';
+            }
+        });
+    }
+});
