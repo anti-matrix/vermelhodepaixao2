@@ -13,6 +13,9 @@ import base64
 import urllib.parse
 import os
 
+# ADDED FOR RAILWAY DEPLOYMENT: PORT from environment variable
+PORT = int(os.environ.get('PORT', 5000))
+
 now = datetime.now()
 article_mindate = now.strftime("%d, %m, %Y")
 
@@ -26,6 +29,9 @@ class ArticleGenerator:
         self.current_model_index = 0
         
         self.freepik_api_key = "FPSX2a0b7c19ee152bde00b37a38038b394d"
+        
+        # ADDED: Get script directory for file operations
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
         
         if not self.api_key:
             print("Error: No API key provided.")
@@ -130,7 +136,9 @@ class ArticleGenerator:
     
     def load_existing_articles(self, json_file='posts_complete.json'):
         try:
-            with open(json_file, 'r', encoding='utf-8') as f:
+            # MODIFIED: Use absolute path in scripts directory
+            json_path = os.path.join(self.script_dir, json_file)
+            with open(json_path, 'r', encoding='utf-8') as f:
                 self.existing_articles = json.load(f)
             print(f"Loaded {len(self.existing_articles)} existing articles for context")
             
@@ -517,9 +525,9 @@ REGRAS ABSOLUTAS (BASEADAS NOS EXEMPLOS):
 CONTEXTO IMPORTANTE DO AMÉRICA-RN ("América", "América de Natal", "Mecão"):
 - Atualmente na Série D do Brasileirão ({self.article_mindate})
 - Estádios: Arena das Dunas (principal) e Arena América (em construção/expansão)
-- Torcida: Máfia (TMV) é a principal organizada
+- Torcida: "Máfia" (TMV) é a principal organizada
 - Apelidos: Mecão (PRINCIPAL), Dragão, Alvirrubro
-- Maior rival: Abc (não ABC) || !!SEMPRE!! se referir ao estádio do Abc como "Marias Lamas" (o nome oficial é Marias Lamas Farache, e o apelido é Frasqueirão)
+- Maior rival: Abc (não ABC)
 
 ESTRUTURA DE RESPOSTA [[OBRIGATÓRIA]]:
 TÍTulo: [título no estilo exato dos exemplos]
@@ -791,6 +799,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         print(f"Images generated: {images_generated}/{len(articles)}")
         
         if articles:
+            # MODIFIED: Use absolute paths in scripts directory
             self.save_all_articles(articles, "generated_articles.json")
             self.save_to_materias_js(articles, "materias_generated.js")
             self.save_cumulative_articles(articles, "all_articles.json", "all_materias.js")
@@ -799,15 +808,19 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
     
     def save_all_articles(self, articles, filename):
         try:
-            with open(filename, 'w', encoding='utf-8') as f:
+            # MODIFIED: Save to scripts directory
+            file_path = os.path.join(self.script_dir, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(articles, f, indent=2, ensure_ascii=False)
-            print(f"Saved {len(articles)} articles to {filename}")
+            print(f"Saved {len(articles)} articles to {file_path}")
         except Exception as e:
             print(f"Error saving articles: {e}")
     
     def save_to_materias_js(self, articles, filename):
         try:
-            with open(filename, 'w', encoding='utf-8') as f:
+            # MODIFIED: Save to scripts directory
+            file_path = os.path.join(self.script_dir, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
                 f.write('// Generated articles by Groq AI\n')
                 f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
                 f.write(f'// Total generated articles: {len(articles)}\n')
@@ -845,7 +858,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
                 
                 f.write('];\n')
             
-            print(f"Saved {len(articles)} articles to {filename} in materias.js format")
+            print(f"Saved {len(articles)} articles to {file_path} in materias.js format")
             
         except Exception as e:
             print(f"Error saving to materias.js format: {e}")
@@ -871,11 +884,13 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             
             merged.sort(key=lambda x: x.get('_year', 0), reverse=True)
             
-            with open(output_file, 'w', encoding='utf-8') as f:
+            # MODIFIED: Save to scripts directory
+            file_path = os.path.join(self.script_dir, output_file)
+            with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(merged, f, indent=2, ensure_ascii=False)
             
             print(f"Merged {len(generated_articles)} generated articles with {len(self.existing_articles)} existing articles")
-            print(f"Total: {len(merged)} articles saved to {output_file}")
+            print(f"Total: {len(merged)} articles saved to {file_path}")
             
             return merged
             
@@ -887,13 +902,17 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         try:
             print(f"\nSaving {len(articles)} articles to cumulative files...")
             
+            # MODIFIED: Use absolute paths in scripts directory
+            json_path = os.path.join(self.script_dir, json_file)
+            js_path = os.path.join(self.script_dir, js_file)
+            
             existing_articles = []
             try:
-                with open(json_file, 'r', encoding='utf-8') as f:
+                with open(json_path, 'r', encoding='utf-8') as f:
                     existing_articles = json.load(f)
-                print(f"   Loaded {len(existing_articles)} existing articles from {json_file}")
+                print(f"   Loaded {len(existing_articles)} existing articles from {json_path}")
             except (FileNotFoundError, json.JSONDecodeError):
-                print(f"   No existing {json_file} found, creating new file")
+                print(f"   No existing {json_path} found, creating new file")
                 existing_articles = []
             
             articles_to_save = []
@@ -935,11 +954,11 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
                 reverse=True
             )
             
-            with open(json_file, 'w', encoding='utf-8') as f:
+            with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(merged_articles, f, indent=2, ensure_ascii=False)
-            print(f"   Saved {len(merged_articles)} total articles to {json_file}")
+            print(f"   Saved {len(merged_articles)} total articles to {json_path}")
             
-            self.save_cumulative_js_format(merged_articles, js_file)
+            self.save_cumulative_js_format(merged_articles, js_path)
             
             return True
             
@@ -949,6 +968,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
 
     def save_cumulative_js_format(self, articles, js_file):
         try:
+            # MODIFIED: js_file is already full path
             with open(js_file, 'w', encoding='utf-8') as f:
                 f.write('// Cumulative articles database\n')
                 f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
@@ -1138,7 +1158,8 @@ def run_web_server():
     print("Press Ctrl+C to stop")
     print("=" * 70)
     
-    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+    # MODIFIED: Use PORT variable from environment (for Railway)
+    app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == '--web':
