@@ -1052,6 +1052,20 @@ CORS(app)
 # Global generator instance - initialized lazily
 generator_instance = None
 
+# Root endpoint for health checks
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint - redirect to health check"""
+    return jsonify({
+        'service': 'Vermelho de Paixão - Article Generator API',
+        'status': 'running',
+        'endpoints': {
+            'health': '/api/health',
+            'generate': '/api/generate (POST)',
+            'models': '/api/models'
+        }
+    })
+
 # Lazy initialization function
 def get_generator():
     """Initialize the ArticleGenerator only when needed"""
