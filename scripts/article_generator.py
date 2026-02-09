@@ -2,6 +2,7 @@ import json
 import random
 import sys
 import time
+import threading
 from datetime import datetime, timedelta
 from collections import Counter
 import re
@@ -1049,8 +1050,9 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
 app = Flask(__name__)
 CORS(app)
 
-# Global generator instance - initialized lazily
+# Global generator instance - initialized lazily with thread safety
 generator_instance = None
+generator_lock = threading.Lock()
 
 # Root endpoint for Railway health checks - RESPONDS INSTANTLY
 @app.route('/', methods=['GET'])
@@ -1068,31 +1070,32 @@ def root():
         'note': 'Generator initializes lazily on first /api/generate request'
     })
 
-# Lazy initialization function
+# Lazy initialization function with thread safety
 def get_generator():
     """Initialize the ArticleGenerator only when needed"""
-    global generator_instance
+    global generator_instance, generator_lock
     
-    if generator_instance is None:
-        try:
-            print("Initializing ArticleGenerator...")
-            generator_instance = ArticleGenerator(
-                api_key="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"
-            )
-            
-            if generator_instance.client and generator_instance.available_models:
-                print(f"Generator initialized successfully with model: {generator_instance.model_name}")
-                print(f"Freepik API key: {generator_instance.freepik_api_key[:10]}...")
-                print(f"Image model: Flux Kontext Pro")
-            else:
-                print("Warning: Generator partially initialized")
-                # The app will still work, just some features limited
+    with generator_lock:
+        if generator_instance is None:
+            try:
+                print("Initializing ArticleGenerator...")
+                generator_instance = ArticleGenerator(
+                    api_key="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"
+                )
                 
-        except Exception as e:
-            print(f"Error initializing generator: {e}")
-            import traceback
-            traceback.print_exc()
-            generator_instance = None
+                if generator_instance.client and generator_instance.available_models:
+                    print(f"Generator initialized successfully with model: {generator_instance.model_name}")
+                    print(f"Freepik API key: {generator_instance.freepik_api_key[:10]}...")
+                    print(f"Image model: Flux Kontext Pro")
+                else:
+                    print("Warning: Generator partially initialized")
+                    # The app will still work, just some features limited
+                    
+            except Exception as e:
+                print(f"Error initializing generator: {e}")
+                import traceback
+                traceback.print_exc()
+                generator_instance = None
     
     return generator_instance
 
@@ -1243,7 +1246,7 @@ def run_web_server():
     print("=" * 70)
     
     # MODIFIED: Use PORT variable from environment (for Railway)
-    app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False)
+    app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False, threaded=True)
 
 # Startup confirmation for Gunicorn deployment
 print("=" * 70)

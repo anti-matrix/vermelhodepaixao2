@@ -5,9 +5,9 @@
         "buildCommand": "pip install -r requirements.txt"
     },
     "deploy": {
-        "startCommand": "gunicorn article_generator:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --log-level info --access-logfile - --error-logfile -",
-        "healthcheckPath": "/",
-        "healthcheckTimeout": 30,
+        "startCommand": "gunicorn article_generator:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --threads 8 --log-level info --access-logfile - --error-logfile -",
+        "healthcheckPath": "/api/health",
+        "healthcheckTimeout": 60,
         "restartPolicyType": "ON_FAILURE",
         "restartPolicyMaxRetries": 3
     }
