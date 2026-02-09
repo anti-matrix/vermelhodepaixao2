@@ -1055,7 +1055,7 @@ generator_instance = None
 # Root endpoint for health checks
 @app.route('/', methods=['GET'])
 def root():
-    """Root endpoint - redirect to health check"""
+    """Root endpoint - responds immediately without initialization"""
     return jsonify({
         'service': 'Vermelho de Paixão - Article Generator API',
         'status': 'running',
@@ -1063,7 +1063,8 @@ def root():
             'health': '/api/health',
             'generate': '/api/generate (POST)',
             'models': '/api/models'
-        }
+        },
+        'message': 'API is ready - Generator initializes on first request'
     })
 
 # Lazy initialization function
@@ -1240,6 +1241,16 @@ def run_web_server():
     
     # MODIFIED: Use PORT variable from environment (for Railway)
     app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False)
+
+# Confirm module loaded successfully (for Gunicorn deployment)
+print("=" * 70)
+print("✓ Flask app module loaded successfully")
+print(f"✓ PORT configured: {PORT}")
+print(f"✓ Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(f"  - {rule.rule} [{', '.join(rule.methods - {'HEAD', 'OPTIONS'})}]")
+print("✓ App ready to serve requests")
+print("=" * 70)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == '--web':
