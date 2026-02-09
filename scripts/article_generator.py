@@ -1052,19 +1052,20 @@ CORS(app)
 # Global generator instance - initialized lazily
 generator_instance = None
 
-# Root endpoint for health checks
+# Root endpoint for Railway health checks - RESPONDS INSTANTLY
 @app.route('/', methods=['GET'])
 def root():
-    """Root endpoint - responds immediately without initialization"""
+    """Root endpoint - responds immediately without any initialization"""
     return jsonify({
         'service': 'Vermelho de Paixão - Article Generator API',
         'status': 'running',
+        'version': '2.0',
         'endpoints': {
-            'health': '/api/health',
-            'generate': '/api/generate (POST)',
-            'models': '/api/models'
+            'health': '/api/health - Check service health',
+            'generate': '/api/generate - Generate articles (POST)',
+            'models': '/api/models - List available models'
         },
-        'message': 'API is ready - Generator initializes on first request'
+        'note': 'Generator initializes lazily on first /api/generate request'
     })
 
 # Lazy initialization function
@@ -1175,27 +1176,29 @@ def generate_api():
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint - should always return 200 if Flask is running"""
-    generator = get_generator()
+    """Health check endpoint - responds immediately without initialization"""
+    # Check if generator is already initialized (don't initialize it now)
+    generator = generator_instance  # Direct access without calling get_generator()
     
     if generator and generator.client and generator.available_models:
         return jsonify({
             'success': True, 
-            'status': 'API is running', 
+            'status': 'API is fully operational', 
             'current_model': generator.model_name,
             'available_models': generator.available_models,
             'image_generation': 'Enabled with Freepik API (Flux Kontext Pro)',
-            'flask_running': True
+            'flask_running': True,
+            'generator_ready': True
         })
     else:
-        # CRITICAL: Return 200 even if generator failed
+        # Return 200 even if generator not initialized - Flask is running
         return jsonify({
-            'success': False, 
-            'status': 'API is running but generator not fully initialized',
+            'success': True, 
+            'status': 'API is running',
             'flask_running': True,
-            'api_ready': True,
-            'error': 'Generator initialization in progress or failed'
-        }), 200  # Always return 200
+            'generator_ready': False,
+            'message': 'Generator will initialize on first /api/generate request'
+        }), 200
 
 @app.route('/api/models', methods=['GET'])
 def list_models():
@@ -1242,14 +1245,15 @@ def run_web_server():
     # MODIFIED: Use PORT variable from environment (for Railway)
     app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False)
 
-# Confirm module loaded successfully (for Gunicorn deployment)
+# Startup confirmation for Gunicorn deployment
 print("=" * 70)
 print("✓ Flask app module loaded successfully")
 print(f"✓ PORT configured: {PORT}")
 print(f"✓ Registered routes:")
 for rule in app.url_map.iter_rules():
-    print(f"  - {rule.rule} [{', '.join(rule.methods - {'HEAD', 'OPTIONS'})}]")
-print("✓ App ready to serve requests")
+    methods = ', '.join(sorted(rule.methods - {'HEAD', 'OPTIONS'}))
+    print(f"  {rule.rule:40s} [{methods}]")
+print("✓ App ready to serve requests (Generator initializes lazily)")
 print("=" * 70)
 
 if __name__ == "__main__":
