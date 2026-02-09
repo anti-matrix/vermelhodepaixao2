@@ -30,34 +30,54 @@ class ArticleGenerator:
         
         self.freepik_api_key = "FPSX2a0b7c19ee152bde00b37a38038b394d"
         
-        # ADDED: Get script directory for file operations
+        # Get script directory for file operations
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         
         if not self.api_key:
-            print("Error: No API key provided.")
+            print("Warning: No API key provided.")
             print("Get one from: https://console.groq.com/keys")
+            self.client = None
             return
         
         try:
             self.client = Groq(api_key=self.api_key)
             print("Groq client initialized")
         except Exception as e:
-            print(f"Error initializing Groq client: {e}")
+            print(f"Warning: Error initializing Groq client: {e}")
             self.client = None
             return
         
         self.available_models = self.get_all_available_models()
         if not self.available_models:
-            print("No models available. Check your API key and internet connection.")
+            print("Warning: No models available.")
             return
         
         print(f"Available models: {', '.join(self.available_models)}")
         self.select_best_model()
         
-        self.load_existing_articles()
-        self.analyze_article_patterns()
+        # Load existing articles - non-critical operation
+        try:
+            self.load_existing_articles()
+            self.analyze_article_patterns()
+        except Exception as e:
+            print(f"Warning: Could not load existing articles: {e}")
+            # Initialize with empty data instead of crashing
+            self.existing_articles = []
+            self.good_articles = []
+            self.authors = []
+            self.all_titles = []
+            self.all_contents = []
+            self.common_title_patterns = []
+            self.common_openings = []
+            self.common_closings = []
+            self.common_phrases = []
+            self.mentioned_names = []
+            self.date_references = []
     
     def get_all_available_models(self):
+        if not self.client:
+            return []
+            
         try:
             print("Fetching all available Groq models...")
             models = self.client.models.list()
@@ -84,22 +104,20 @@ class ArticleGenerator:
             return sorted_models
         except Exception as e:
             print(f"Error fetching available models: {e}")
+            # Fallback to known models
             fallback_models = [
                 'llama-3.3-70b-versatile',
                 'llama-3.1-70b-versatile', 
                 'llama-3.1-8b-instant',
                 'mixtral-8x7b-32768',
-                'gemma2-9b-it',
-                'llama-3.2-90b-vision-preview',
-                'llama-3.2-11b-vision-preview',
-                'llama-3.2-1b-preview',
-                'llama-3.1-8b-instant',
-                'llama-3.1-405b-reasoning',
-                'llama-guard-3-8b'
+                'gemma2-9b-it'
             ]
             return fallback_models
     
     def select_best_model(self):
+        if not self.available_models:
+            return
+            
         for model in self.available_models:
             if model not in self.rate_limited_models and model not in self.slow_models:
                 self.model_name = model
@@ -136,8 +154,18 @@ class ArticleGenerator:
     
     def load_existing_articles(self, json_file='posts_complete.json'):
         try:
-            # MODIFIED: Use absolute path in scripts directory
             json_path = os.path.join(self.script_dir, json_file)
+            print(f"Looking for {json_file} at: {json_path}")
+            
+            if not os.path.exists(json_path):
+                print(f"Warning: {json_file} not found at {json_path}")
+                self.existing_articles = []
+                self.good_articles = []
+                self.authors = []
+                self.all_titles = []
+                self.all_contents = []
+                return
+                
             with open(json_path, 'r', encoding='utf-8') as f:
                 self.existing_articles = json.load(f)
             print(f"Loaded {len(self.existing_articles)} existing articles for context")
@@ -154,8 +182,8 @@ class ArticleGenerator:
             self.all_titles = [str(art.get('_titulo', '')).strip() for art in self.existing_articles if art.get('_titulo')]
             self.all_contents = [str(art.get('_conteudo', '')).strip() for art in self.existing_articles if art.get('_conteudo') and len(str(art.get('_conteudo'))) > 100]
             
-        except FileNotFoundError:
-            print(f"{json_file} not found. Starting with empty context.")
+        except Exception as e:
+            print(f"Warning: Error loading {json_file}: {e}")
             self.existing_articles = []
             self.good_articles = []
             self.authors = []
@@ -213,6 +241,9 @@ class ArticleGenerator:
         return unique_closings[:15]
     
     def extract_common_phrases(self):
+        if not self.all_contents:
+            return []
+            
         all_text = ' '.join(self.all_contents).lower()
         
         common_terms = [
@@ -278,7 +309,7 @@ class ArticleGenerator:
             if player_names:
                 return random.choice(player_names)
         
-        players = ["João Pedro", "Matheusinho", "Alemão", "Felipe Azevedo", "Juninho", "Marcinho", "Rafael Carioca", "Max", "Max", "Max", "Pardal", "Pardal", "Cascata", "Cascata"]
+        players = ["João Pedro", "Matheusinho", "Alemão", "Felipe Azevedo", "Juninho", "Marcinho", "Rafael Carioca", "Max", "Pardal", "Cascata"]
         return random.choice(players)
     
     def get_random_staff(self):
@@ -713,7 +744,15 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
 
     def create_placeholder(self, titulo):
         try:
-            from PIL import Image, ImageDraw, ImageFont
+            # Try to import PIL, but don't crash if it fails
+            try:
+                from PIL import Image, ImageDraw, ImageFont
+                pillow_available = True
+            except ImportError:
+                pillow_available = False
+                print("   Pillow not available for placeholder generation")
+                return None
+            
             import io
             
             img = Image.new('RGB', (800, 600), color=(139, 0, 0))
@@ -744,6 +783,10 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             return None
     
     def generate_multiple_articles(self, count=5, topic=None):
+        if not self.client:
+            print("Error: Groq client not initialized")
+            return []
+            
         articles = []
         successful = 0
         failed = 0
@@ -799,7 +842,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         print(f"Images generated: {images_generated}/{len(articles)}")
         
         if articles:
-            # MODIFIED: Use absolute paths in scripts directory
             self.save_all_articles(articles, "generated_articles.json")
             self.save_to_materias_js(articles, "materias_generated.js")
             self.save_cumulative_articles(articles, "all_articles.json", "all_materias.js")
@@ -808,7 +850,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
     
     def save_all_articles(self, articles, filename):
         try:
-            # MODIFIED: Save to scripts directory
             file_path = os.path.join(self.script_dir, filename)
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(articles, f, indent=2, ensure_ascii=False)
@@ -818,7 +859,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
     
     def save_to_materias_js(self, articles, filename):
         try:
-            # MODIFIED: Save to scripts directory
             file_path = os.path.join(self.script_dir, filename)
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write('// Generated articles by Groq AI\n')
@@ -884,7 +924,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             
             merged.sort(key=lambda x: x.get('_year', 0), reverse=True)
             
-            # MODIFIED: Save to scripts directory
             file_path = os.path.join(self.script_dir, output_file)
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(merged, f, indent=2, ensure_ascii=False)
@@ -902,7 +941,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         try:
             print(f"\nSaving {len(articles)} articles to cumulative files...")
             
-            # MODIFIED: Use absolute paths in scripts directory
             json_path = os.path.join(self.script_dir, json_file)
             js_path = os.path.join(self.script_dir, js_file)
             
@@ -968,7 +1006,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
 
     def save_cumulative_js_format(self, articles, js_file):
         try:
-            # MODIFIED: js_file is already full path
             with open(js_file, 'w', encoding='utf-8') as f:
                 f.write('// Cumulative articles database\n')
                 f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
@@ -1008,17 +1045,51 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         except Exception as e:
             print(f"   Error saving JS format: {e}")
 
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
+# Global generator instance - initialized lazily
 generator_instance = None
+
+# Lazy initialization function
+def get_generator():
+    """Initialize the ArticleGenerator only when needed"""
+    global generator_instance
+    
+    if generator_instance is None:
+        try:
+            print("Initializing ArticleGenerator...")
+            generator_instance = ArticleGenerator(
+                api_key="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"
+            )
+            
+            if generator_instance.client and generator_instance.available_models:
+                print(f"Generator initialized successfully with model: {generator_instance.model_name}")
+                print(f"Freepik API key: {generator_instance.freepik_api_key[:10]}...")
+                print(f"Image model: Flux Kontext Pro")
+            else:
+                print("Warning: Generator partially initialized")
+                # The app will still work, just some features limited
+                
+        except Exception as e:
+            print(f"Error initializing generator: {e}")
+            import traceback
+            traceback.print_exc()
+            generator_instance = None
+    
+    return generator_instance
 
 @app.route('/api/generate', methods=['POST'])
 def generate_api():
-    global generator_instance
+    generator = get_generator()
     
-    if not generator_instance:
-        return jsonify({'success': False, 'error': 'Article generator not initialized'}), 500
+    if not generator or not generator.client:
+        return jsonify({
+            'success': False, 
+            'error': 'Article generator not available or failed to initialize',
+            'available_models': generator.available_models if generator else []
+        }), 503  # Service Unavailable
     
     data = request.json
     if not data:
@@ -1032,9 +1103,9 @@ def generate_api():
     
     try:
         print(f"\n[API] Received request: {count} articles about: {query}")
-        print(f"[API] Current model: {generator_instance.model_name}")
+        print(f"[API] Current model: {generator.model_name}")
         
-        articles = generator_instance.generate_multiple_articles(
+        articles = generator.generate_multiple_articles(
             count=count, 
             topic=query
         )
@@ -1068,14 +1139,14 @@ def generate_api():
             return jsonify({
                 'success': True, 
                 'articles': articles_data,
-                'model_used': generator_instance.model_name,
+                'model_used': generator.model_name,
                 'images_generated': images_generated
             })
         else:
             return jsonify({
                 'success': False, 
                 'error': 'Failed to generate articles',
-                'available_models': generator_instance.available_models
+                'available_models': generator.available_models
             }), 500
     except Exception as e:
         print(f"[API] Error: {e}")
@@ -1084,78 +1155,73 @@ def generate_api():
         return jsonify({
             'success': False, 
             'error': str(e),
-            'available_models': generator_instance.available_models if generator_instance else []
+            'available_models': generator.available_models if generator else []
         }), 500
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    global generator_instance
-    if generator_instance and generator_instance.available_models:
+    """Health check endpoint - should always return 200 if Flask is running"""
+    generator = get_generator()
+    
+    if generator and generator.client and generator.available_models:
         return jsonify({
             'success': True, 
             'status': 'API is running', 
-            'current_model': generator_instance.model_name,
-            'available_models': generator_instance.available_models,
-            'image_generation': 'Enabled with Freepik API (Flux Kontext Pro)'
+            'current_model': generator.model_name,
+            'available_models': generator.available_models,
+            'image_generation': 'Enabled with Freepik API (Flux Kontext Pro)',
+            'flask_running': True
         })
     else:
-        return jsonify({'success': False, 'error': 'Generator not initialized or no models available'}), 500
+        # CRITICAL: Return 200 even if generator failed
+        return jsonify({
+            'success': False, 
+            'status': 'API is running but generator not fully initialized',
+            'flask_running': True,
+            'api_ready': True,
+            'error': 'Generator initialization in progress or failed'
+        }), 200  # Always return 200
 
 @app.route('/api/models', methods=['GET'])
 def list_models():
-    global generator_instance
-    if generator_instance:
+    generator = get_generator()
+    
+    if generator and generator.available_models:
         return jsonify({
             'success': True,
-            'available_models': generator_instance.available_models,
-            'current_model': generator_instance.model_name
+            'available_models': generator.available_models,
+            'current_model': generator.model_name
         })
     else:
-        return jsonify({'success': False, 'error': 'Generator not initialized'}), 500
+        return jsonify({
+            'success': False, 
+            'error': 'Generator not initialized or no models available',
+            'available_models': []
+        }), 503
 
 def run_web_server():
-    global generator_instance
-    
     print("=" * 70)
     print("VERMELHO DE PAIXÃO - WEB API SERVER")
     print("AI Article Generator with Freepik Image Generation")
-    print("Using Freepik Flux Kontext Pro API")
     print("=" * 70)
     
-    generator_instance = ArticleGenerator(
-        api_key="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"
-    )
-    
-    if not generator_instance.client:
-        print("\nFailed to initialize Groq client.")
-        return
-    
-    if not generator_instance.available_models:
-        print("\nNo models available.")
-        return
-    
-    print(f"\nInitialization complete!")
-    print(f"Selected model: {generator_instance.model_name}")
-    print(f"Image generation: AUTO-ENABLED with Freepik API")
-    print(f"Freepik API key: {generator_instance.freepik_api_key[:10]}...")
-    print(f"Model: Flux Kontext Pro")
-    print(f"Aspect Ratio: 16:9 (landscape)")
+    print(f"\nFlask server starting...")
+    print(f"ArticleGenerator will initialize on first API request")
     
     print("\n" + "=" * 70)
     print("API ENDPOINTS:")
     print("-" * 70)
-    print("• GET  http://localhost:5000/api/health    - Check status")
-    print("• GET  http://localhost:5000/api/models    - List models")
-    print("• POST http://localhost:5000/api/generate - Generate articles WITH images")
+    print(f"• GET  http://0.0.0.0:{PORT}/api/health    - Check status")
+    print(f"• GET  http://0.0.0.0:{PORT}/api/models    - List models")
+    print(f"• POST http://0.0.0.0:{PORT}/api/generate - Generate articles WITH images")
     print("\nExample POST request:")
     print('''{
   "query": "América FC no campeonato brasileiro",
   "count": 3
 }''')
     print("=" * 70)
-    print("\nServer started at: http://localhost:5000")
-    print("Image generation: Freepik → Placeholder (fallback)")
-    print("Press Ctrl+C to stop")
+    print(f"\nServer starting at: http://0.0.0.0:{PORT}")
+    print(f"Press Ctrl+C to stop")
     print("=" * 70)
     
     # MODIFIED: Use PORT variable from environment (for Railway)
@@ -1188,4 +1254,5 @@ if __name__ == "__main__":
             print("    generator.generate_multiple_articles(count=3, topic='América FC')")
             print("=" * 70)
         else:
-            print("\nFailed to initialize system.")
+            print("\nWarning: System partially initialized")
+            print("Some features may not work correctly")
