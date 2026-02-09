@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Test Base64 Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .card {
+            background: white;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🖼️ Teste de Imagem Base64</h1>
+    
+    <div class="card">
+        <h3>1. Imagem de teste (1x1 pixel vermelho):</h3>
+        <img id="testImage" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQdzhkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAOSURBVBhXY/jPwAAAAAMAAVgBEnmkpAAAAABJRU5ErkJggg==" 
+             alt="Test" width="100" height="100" style="image-rendering: pixelated;"/>
+        <div id="status1" class="status"></div>
+    </div>
+
+    <div class="card">
+        <h3>2. Teste com imagem do Pollinations.ai:</h3>
+        <button onclick="testPollinations()">Gerar Imagem de Teste</button>
+        <div id="status2" class="status"></div>
+        <img id="pollinationsImage" style="display:none;" alt="Pollinations test"/>
+    </div>
+
+    <div class="card">
+        <h3>3. Simular artigo gerado:</h3>
+        <div id="articleCard" style="border: 1px solid #dc3545; padding: 15px; margin: 10px 0;">
+            <h4>Título do Artigo de Teste</h4>
+            <img id="articleImage" style="display:none;" alt="Article image"/>
+            <p>Conteúdo do artigo aqui...</p>
+            <small>Data: 06/02/2026 | Hora: 12:00 | Autor: Teste</small>
+        </div>
+        <div id="status3" class="status"></div>
+    </div>
+
+    <script>
+        // Test 1: Basic base64 image
+        document.getElementById('testImage').onload = function() {
+            document.getElementById('status1').innerHTML = '✅ Imagem de teste carregada com sucesso!';
+            document.getElementById('status1').className = 'status success';
+        };
+        document.getElementById('testImage').onerror = function() {
+            document.getElementById('status1').innerHTML = '❌ Erro ao carregar imagem de teste';
+            document.getElementById('status1').className = 'status error';
+        };
+
+        // Test 2: Pollinations.ai
+        async function testPollinations() {
+            const status = document.getElementById('status2');
+            const img = document.getElementById('pollinationsImage');
+            
+            status.innerHTML = '⏳ Gerando imagem...';
+            status.className = 'status';
+            
+            try {
+                const prompt = encodeURIComponent('football match action, red and white colors, Brazilian stadium, photorealistic');
+                const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true`;
+                
+                console.log('Requesting:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const objectUrl = URL.createObjectURL(blob);
+                    
+                    img.src = objectUrl;
+                    img.style.display = 'block';
+                    img.onload = function() {
+                        status.innerHTML = '✅ Imagem do Pollinations carregada! Size: ' + (blob.size / 1024).toFixed(2) + ' KB';
+                        status.className = 'status success';
+                    };
+                } else {
+                    status.innerHTML = '❌ Pollinations retornou status ' + response.status;
+                    status.className = 'status error';
+                }
+            } catch (error) {
+                status.innerHTML = '❌ Erro: ' + error.message;
+                status.className = 'status error';
+                console.error('Error:', error);
+            }
+        }
+
+        // Test 3: Simulate article with base64 image
+        window.onload = function() {
+            // Simulate API response
+            const mockArticle = {
+                _id: 12345,
+                _titulo: 'América FC vence partida importante',
+                _conteudo: 'O América Futebol Clube conquistou mais uma vitória...',
+                _data: '06/02/2026',
+                _hora: '14:30',
+                _autor: 'João Silva',
+                _imgsrc: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQdzhkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAOSURBVBhXY/jPwAAAAAMAAVgBEnmkpAAAAABJRU5ErkJggg==',
+                _imgwth: '200',
+                _imghgt: '200'
+            };
+
+            const status3 = document.getElementById('status3');
+            const articleImg = document.getElementById('articleImage');
+
+            if (mockArticle._imgsrc && mockArticle._imgsrc !== 'None') {
+                console.log('Setting article image...');
+                console.log('Image src length:', mockArticle._imgsrc.length);
+                console.log('Image src start:', mockArticle._imgsrc.substring(0, 50));
+                
+                articleImg.src = mockArticle._imgsrc;
+                articleImg.width = mockArticle._imgwth;
+                articleImg.height = mockArticle._imghgt;
+                articleImg.style.display = 'block';
+                articleImg.style.imageRendering = 'pixelated';
+                
+                articleImg.onload = function() {
+                    status3.innerHTML = '✅ Imagem do artigo carregada com sucesso!';
+                    status3.className = 'status success';
+                };
+                
+                articleImg.onerror = function() {
+                    status3.innerHTML = '❌ Erro ao carregar imagem do artigo';
+                    status3.className = 'status error';
+                };
+            } else {
+                status3.innerHTML = '⚠️ Artigo sem imagem (_imgsrc = "' + mockArticle._imgsrc + '")';
+                status3.className = 'status error';
+            }
+        };
+    </script>
+</body>
+</html>

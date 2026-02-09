@@ -1,4 +1,3 @@
-# scraperv2_fixed.py
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -37,6 +36,8 @@ class CompleteArchiveScraper:
         self.visited_urls = set()
         self.oldest_date = None
         self.newest_date = None
+        self.last_post_count = 0
+        self.consecutive_duplicate_pages = 0
         
     def clean_text(self, text):
         """Clean text to be JSON-safe and remove problematic characters"""
@@ -226,7 +227,7 @@ class CompleteArchiveScraper:
         return None
     
     def extract_post_data(self, post_div):
-        """Extract and clean data from a post div"""
+        """Extract and clean data from a post div with YouTube video support"""
         try:
             post_id = random.randint(10000, 99999)
             while post_id in self.used_ids:
@@ -245,6 +246,30 @@ class CompleteArchiveScraper:
                             post_div.find('div', class_='entry-content'))
             raw_conteudo = conteudo_elem.get_text(strip=True) if conteudo_elem else ''
             
+            # Extract YouTube iframe information
+            video_src = 'None'
+            video_width = 'None'
+            video_height = 'None'
+            
+            if conteudo_elem:
+                # Look for YouTube iframes
+                iframe = conteudo_elem.find('iframe')
+                if iframe and iframe.get('src'):
+                    src = iframe.get('src')
+                    # Check if it's a YouTube URL
+                    youtube_patterns = [
+                        r'youtube\.com/embed/',
+                        r'youtu\.be/',
+                        r'youtube\.com/watch\?v='
+                    ]
+                    
+                    for pattern in youtube_patterns:
+                        if re.search(pattern, src, re.IGNORECASE):
+                            video_src = src
+                            video_width = iframe.get('width', '560')  # Default width
+                            video_height = iframe.get('height', '315')  # Default height
+                            break
+            
             data_elem = (post_div.find('h2', class_='date-header') or
                         post_div.find('span', class_='post-date') or
                         post_div.find('span', class_='date'))
@@ -255,10 +280,8 @@ class CompleteArchiveScraper:
             if year:
                 if self.newest_date is None or year > self.newest_date:
                     self.newest_date = year
-                    logging.info(f"New newest year: {year}")
                 if self.oldest_date is None or year < self.oldest_date:
                     self.oldest_date = year
-                    logging.info(f"New oldest year: {year}")
             
             if ',' in raw_data:
                 raw_data = raw_data.split(',')[0].strip()
@@ -290,10 +313,13 @@ class CompleteArchiveScraper:
             
             # Special handling for URLs
             imgsrc = self.clean_url(raw_imgsrc)
+            videosrc = self.clean_url(video_src)
             
             # Convert width/height to strings
             imgwth = str(raw_imgwth) if raw_imgwth not in ['None', None] else 'None'
             imghgt = str(raw_imghgt) if raw_imghgt not in ['None', None] else 'None'
+            videowth = str(video_width) if video_width not in ['None', None] else 'None'
+            videohgt = str(video_height) if video_height not in ['None', None] else 'None'
             
             return {
                 '_id': post_id,
@@ -305,6 +331,9 @@ class CompleteArchiveScraper:
                 '_imgsrc': imgsrc,
                 '_imgwth': imgwth,
                 '_imghgt': imghgt,
+                '_videosrc': videosrc,
+                '_videowth': videowth,
+                '_videohgt': videohgt,
                 '_year': year
             }
         except Exception as e:
@@ -340,16 +369,12 @@ class CompleteArchiveScraper:
             # Clean the URL
             next_url = self.clean_url(next_url)
             
-            if next_url in self.visited_urls:
-                logging.warning(f"Already visited next URL: {next_url}")
-                return None
-            
             return next_url
         
         return None
     
     def scrape_page(self, url, page_num):
-        """Scrape a single page"""
+        """Scrape a single page - collect ALL posts without duplicate checking"""
         logging.info(f"Page {page_num}: {url}")
         
         response = self.safe_request(url)
@@ -375,43 +400,36 @@ class CompleteArchiveScraper:
         for post_div in posts:
             post_data = self.extract_post_data(post_div)
             if post_data:
-                # More robust duplicate detection
-                is_duplicate = False
-                title_hash = hash(post_data['_titulo'].lower()[:100])
-                content_hash = hash(post_data['_conteudo'][:200] if len(post_data['_conteudo']) > 200 else post_data['_conteudo'])
-                
-                for existing in self.scraped_posts:
-                    existing_title_hash = hash(existing['_titulo'].lower()[:100])
-                    existing_content_hash = hash(existing['_conteudo'][:200] if len(existing['_conteudo']) > 200 else existing['_conteudo'])
-                    
-                    if (title_hash == existing_title_hash and 
-                        content_hash == existing_content_hash and
-                        post_data['_data'] == existing['_data']):
-                        is_duplicate = True
-                        break
-                
-                if not is_duplicate:
-                    page_posts.append(post_data)
+                page_posts.append(post_data)
         
-        logging.info(f"Found {len(page_posts)} new posts")
+        logging.info(f"Found {len(page_posts)} posts")
         
         next_url = self.get_next_url(soup, url)
         
         return page_posts, next_url
     
-    def scrape_2024_to_2008(self, max_pages=1000):
-        """Scrape from 2024 URL back to 2008"""
+    def scrape_2024_to_2008(self, max_pages=5000):
+        """Scrape from 2024 URL back to 2008 - collect ALL posts"""
         start_url = "http://www.vermelhodepaixao.com.br/search?updated-max=2024-04-12T18:29:00-03:00&max-results=56"
         current_url = start_url
         page_num = 1
-        consecutive_empty_pages = 0
-        max_consecutive_empty = 3
+        pages_without_new_posts = 0
+        max_pages_without_new = 5
         
-        self.visited_urls.add(current_url)
-        
-        while (current_url and 
-               page_num <= max_pages and 
-               consecutive_empty_pages < max_consecutive_empty):
+        while current_url and page_num <= max_pages:
+            
+            # Skip if we've already visited this URL
+            if current_url in self.visited_urls:
+                logging.info(f"Already visited URL {current_url}, skipping to next")
+                # Try to get next URL by parsing from the current page
+                response = self.safe_request(current_url)
+                if response:
+                    soup = BeautifulSoup(response.content, 'html.parser')
+                    next_url = self.get_next_url(soup, current_url)
+                    if next_url and next_url != current_url:
+                        current_url = next_url
+                        continue
+                break
             
             self.visited_urls.add(current_url)
             
@@ -420,19 +438,34 @@ class CompleteArchiveScraper:
             if posts is None:
                 break
             
+            # Add all posts from this page
+            new_post_count = 0
             for post in posts:
                 self.scraped_posts.append(post)
+                new_post_count += 1
             
-            logging.info(f"Total posts: {len(self.scraped_posts)}")
+            logging.info(f"Page {page_num}: Added {new_post_count} posts, Total: {len(self.scraped_posts)}")
             
-            # Check if we've reached 2008
-            if self.oldest_date and self.oldest_date <= 2008:
-                logging.info(f"Reached target year 2008 (oldest: {self.oldest_date}). Stopping.")
+            # Check if we're making progress
+            if new_post_count == 0:
+                pages_without_new_posts += 1
+                logging.warning(f"Page {page_num} had 0 new posts. Consecutive: {pages_without_new_posts}")
+            else:
+                pages_without_new_posts = 0
+            
+            # Save checkpoint every 100 pages
+            if page_num % 100 == 0:
+                self.save_checkpoint(page_num)
+            
+            # Stop if we've had too many pages without new posts
+            if pages_without_new_posts >= max_pages_without_new:
+                logging.warning(f"Stopping: {max_pages_without_new} consecutive pages without new posts")
                 break
             
-            # Save checkpoint every 10 pages
-            if page_num % 10 == 0:
-                self.save_checkpoint(page_num)
+            # Check if we've reached 2008 (based on oldest post year)
+            if self.oldest_date and self.oldest_date <= 2008:
+                logging.info(f"Reached target year 2008 (oldest: {self.oldest_date}). Continuing to collect all 2008 posts...")
+                # Don't break, continue to get all 2008 posts
             
             if not next_url or next_url == current_url:
                 logging.info("No more pages or reached end")
@@ -441,7 +474,8 @@ class CompleteArchiveScraper:
             current_url = next_url
             page_num += 1
             
-            delay = 2 + (random.random() * 2)
+            # Random delay to avoid being blocked
+            delay = 1 + (random.random() * 2)
             time.sleep(delay)
         
         logging.info(f"Finished. Scraped {page_num} pages, {len(self.scraped_posts)} total posts.")
@@ -456,26 +490,10 @@ class CompleteArchiveScraper:
         """Save checkpoint with safe JSON serialization"""
         checkpoint_file = f'checkpoint_page_{page_num}.json'
         try:
-            # Use custom JSON encoder for safety
-            class SafeJSONEncoder(json.JSONEncoder):
-                def encode(self, obj):
-                    # Handle strings specially to prevent breaking syntax
-                    if isinstance(obj, str):
-                        # Escape problematic sequences
-                        obj = (obj.replace('\\', '\\\\')
-                                .replace('"', '\\"')
-                                .replace('\n', '\\n')
-                                .replace('\r', '\\r')
-                                .replace('\t', '\\t')
-                                .replace('\u2028', '\\u2028')
-                                .replace('\u2029', '\\u2029'))
-                    return super().encode(obj)
-            
             with open(checkpoint_file, 'w', encoding='utf-8') as f:
                 json.dump(self.scraped_posts, f, 
                          indent=2, 
                          ensure_ascii=False,
-                         cls=SafeJSONEncoder,
                          separators=(',', ': '))
             
             logging.info(f"Checkpoint saved: {checkpoint_file}")
@@ -484,26 +502,26 @@ class CompleteArchiveScraper:
     
     def save_single_output(self):
         """Save all posts to single JSON and JS files"""
-        # Remove duplicates using multiple criteria
-        unique_posts = []
-        seen_hashes = set()
+        # Use ALL scraped posts
+        all_posts = self.scraped_posts.copy()
         
-        for post in self.scraped_posts:
-            # Create a unique hash for each post
-            post_hash = hash((
-                post['_titulo'].lower()[:150],
-                post['_data'],
-                hash(post['_conteudo'][:300]) if len(post['_conteudo']) > 300 else hash(post['_conteudo'])
-            ))
-            
-            if post_hash not in seen_hashes:
-                seen_hashes.add(post_hash)
+        logging.info(f"Saving {len(all_posts)} posts to files")
+        
+        # Simple deduplication by ID only - preserve original order
+        unique_posts = []
+        seen_ids = set()
+        
+        # Keep the first occurrence of each ID (which is the original order)
+        for post in all_posts:
+            post_id = post['_id']
+            if post_id not in seen_ids:
+                seen_ids.add(post_id)
                 unique_posts.append(post)
         
-        logging.info(f"After deduplication: {len(unique_posts)} posts")
+        logging.info(f"After ID deduplication: {len(unique_posts)} posts")
         
-        # Sort by year (newest first)
-        unique_posts.sort(key=lambda x: (x.get('_year') or 0), reverse=True)
+        # DO NOT SORT - keep the original order from scraping
+        # This is already newest to oldest as scraped
         
         # 1. Save as single JSON file
         json_file = 'posts_complete.json'
@@ -513,10 +531,9 @@ class CompleteArchiveScraper:
                          indent=2, 
                          ensure_ascii=False,
                          separators=(',', ': '))
-            logging.info(f"JSON saved: {json_file}")
+            logging.info(f"JSON saved: {json_file} with {len(unique_posts)} posts")
         except Exception as e:
             logging.error(f"Error saving JSON: {e}")
-            # Try manual saving as fallback
             self.save_json_manually(unique_posts, json_file)
         
         # 2. Save as single JS file
@@ -531,7 +548,7 @@ class CompleteArchiveScraper:
         self.save_statistics(unique_posts)
         
         return len(unique_posts)
-    
+
     def save_json_manually(self, posts, filename):
         """Manual JSON saving as fallback"""
         try:
@@ -565,7 +582,7 @@ class CompleteArchiveScraper:
         """Save as single JavaScript file with proper escaping"""
         try:
             with open(filename, 'w', encoding='utf-8') as f:
-                f.write('// Generated by Complete Archive Scraper\n')
+                f.write('// Generated by total Vdp Scraper by anti-matrix\n')
                 f.write(f'// Scraped on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
                 f.write(f'// Total posts: {len(posts)}\n')
                 if self.newest_date and self.oldest_date:
@@ -576,18 +593,40 @@ class CompleteArchiveScraper:
                 f.write('var x = [\n')
                 
                 for i, post in enumerate(posts):
-                    # Escape each field properly
-                    f.write('  {\n')
-                    f.write(f'    _id: {post["_id"]},\n')
-                    f.write(f'    _titulo: "{self.escape_js_string(post["_titulo"])}",\n')
-                    f.write(f'    _conteudo: "{self.escape_js_string(post["_conteudo"])}",\n')
-                    f.write(f'    _data: "{self.escape_js_string(post["_data"])}",\n')
-                    f.write(f'    _hora: "{self.escape_js_string(post["_hora"])}",\n')
-                    f.write(f'    _autor: "{self.escape_js_string(post["_autor"])}",\n')
-                    f.write(f'    _imgsrc: "{self.escape_js_string(post["_imgsrc"])}",\n')
-                    f.write(f'    _imgwth: "{self.escape_js_string(post["_imgwth"])}",\n')
-                    f.write(f'    _imghgt: "{self.escape_js_string(post["_imghgt"])}"\n')
-                    f.write('  }' + (',' if i < len(posts) - 1 else '') + '\n')
+                    try:
+                        # Escape each field properly
+                        f.write('  {\n')
+                        f.write(f'    _id: {post.get("_id", "null")},\n')
+                        f.write(f'    _titulo: "{self.escape_js_string(post.get("_titulo", ""))}",\n')
+                        f.write(f'    _conteudo: "{self.escape_js_string(post.get("_conteudo", ""))}",\n')
+                        f.write(f'    _data: "{self.escape_js_string(post.get("_data", ""))}",\n')
+                        f.write(f'    _hora: "{self.escape_js_string(post.get("_hora", ""))}",\n')
+                        f.write(f'    _autor: "{self.escape_js_string(post.get("_autor", ""))}",\n')
+                        f.write(f'    _imgsrc: "{self.escape_js_string(post.get("_imgsrc", "None"))}",\n')
+                        f.write(f'    _imgwth: "{self.escape_js_string(post.get("_imgwth", "None"))}",\n')
+                        f.write(f'    _imghgt: "{self.escape_js_string(post.get("_imghgt", "None"))}",\n')
+                        # Add video fields
+                        f.write(f'    _videosrc: "{self.escape_js_string(post.get("_videosrc", "None"))}",\n')
+                        f.write(f'    _videowth: "{self.escape_js_string(post.get("_videowth", "None"))}",\n')
+                        f.write(f'    _videohgt: "{self.escape_js_string(post.get("_videohgt", "None"))}"\n')
+                        f.write('  }' + (',' if i < len(posts) - 1 else '') + '\n')
+                    except Exception as e:
+                        logging.error(f"Error writing post {i} to JavaScript: {e}")
+                        # Write a minimal post with error indicator
+                        f.write('  {\n')
+                        f.write(f'    _id: {post.get("_id", i)},\n')
+                        f.write(f'    _titulo: "ERROR LOADING POST {i}",\n')
+                        f.write(f'    _conteudo: "Error processing this post during export",\n')
+                        f.write(f'    _data: "",\n')
+                        f.write(f'    _hora: "",\n')
+                        f.write(f'    _autor: "System",\n')
+                        f.write(f'    _imgsrc: "None",\n')
+                        f.write(f'    _imgwth: "None",\n')
+                        f.write(f'    _imghgt: "None",\n')
+                        f.write(f'    _videosrc: "None",\n')
+                        f.write(f'    _videowth: "None",\n')
+                        f.write(f'    _videohgt: "None"\n')
+                        f.write('  }' + (',' if i < len(posts) - 1 else '') + '\n')
                 
                 f.write('];\n\n')
                 f.write(f'var totalPosts = x.length;\n')
@@ -636,50 +675,52 @@ function getPostById(id) {
 console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYear + ')');
 ''')
             
-            logging.info(f"JavaScript saved: {filename}")
-            
-            # Validate the generated JavaScript
-            self.validate_javascript_file(filename)
+            logging.info(f"JavaScript saved: {filename} with {len(posts)} posts")
             
         except Exception as e:
             logging.error(f"Error saving JavaScript: {e}")
+            self.save_javascript_fallback(posts, filename)
     
-    def validate_javascript_file(self, filename):
-        """Validate the generated JavaScript file"""
+    def save_javascript_fallback(self, posts, filename):
+        """Fallback method to save JavaScript if the main method fails"""
         try:
-            with open(filename, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # Check for common issues
-            issues = []
-            
-            # Check for unescaped quotes
-            lines = content.split('\n')
-            for i, line in enumerate(lines, 1):
-                # Count quotes to check for imbalance
-                double_quotes = line.count('"')
-                single_quotes = line.count("'")
+            logging.warning(f"Trying fallback JavaScript save for {filename}")
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write('// Generated by Complete Archive Scraper - FALLBACK MODE\n')
+                f.write(f'// Scraped on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
+                f.write(f'// Total posts: {len(posts)}\n')
+                f.write('\nvar x = [\n')
                 
-                # Check for unescaped quotes in string contexts
-                if '"' in line and '\\"' not in line.replace('\\"', ''):
-                    # Look for string assignments
-                    if ':"' in line or '= "' in line:
-                        issues.append(f"Line {i}: Possible unescaped double quote")
+                for i, post in enumerate(posts):
+                    # Extract and clean each field separately
+                    titulo = post.get("_titulo", "").replace('"', "'").replace("\\", "\\\\")
+                    conteudo = post.get("_conteudo", "").replace('"', "'").replace("\\", "\\\\")
+                    imgsrc = post.get("_imgsrc", "None").replace('"', "'").replace("\\", "\\\\")
+                    videosrc = post.get("_videosrc", "None").replace('"', "'").replace("\\", "\\\\")
+                    
+                    f.write('  {\n')
+                    f.write(f'    _id: {post.get("_id", i)},\n')
+                    f.write(f'    _titulo: "{titulo}",\n')
+                    f.write(f'    _conteudo: "{conteudo}",\n')
+                    f.write(f'    _data: "{post.get("_data", "")}",\n')
+                    f.write(f'    _hora: "{post.get("_hora", "")}",\n')
+                    f.write(f'    _autor: "{post.get("_autor", "")}",\n')
+                    f.write(f'    _imgsrc: "{imgsrc}",\n')
+                    f.write(f'    _imgwth: "{post.get("_imgwth", "None")}",\n')
+                    f.write(f'    _imghgt: "{post.get("_imghgt", "None")}",\n')
+                    f.write(f'    _videosrc: "{videosrc}",\n')
+                    f.write(f'    _videowth: "{post.get("_videowth", "None")}",\n')
+                    f.write(f'    _videohgt: "{post.get("_videohgt", "None")}",\n')
+                    year_val = post.get("_year")
+                    f.write(f'    _year: {year_val if year_val is not None else "null"}\n')
+                    f.write('  }' + (',' if i < len(posts) - 1 else '') + '\n')
                 
-                # Check for line separators
-                if '\u2028' in line or '\u2029' in line:
-                    issues.append(f"Line {i}: Contains Unicode line/paragraph separator")
+                f.write('];\n')
+                f.write(f'var totalPosts = x.length;\n')
             
-            if issues:
-                logging.warning(f"Validation issues in {filename}:")
-                for issue in issues[:5]:  # Show first 5 issues
-                    logging.warning(f"  - {issue}")
-            else:
-                logging.info(f"JavaScript file validation passed: {filename}")
-                
+            logging.info(f"Fallback JavaScript saved: {filename}")
         except Exception as e:
-            logging.error(f"Error validating JavaScript file: {e}")
-    
+            logging.error(f"Fallback JavaScript save also failed: {e}")
     def save_as_html_preview(self, posts, filename, max_posts=100):
         """Save HTML preview"""
         try:
@@ -698,6 +739,7 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
         .stats-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
         .year-badge { background: #dc3545; color: white; }
         .url-truncate { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .video-badge { background: #ff0000; color: white; }
     </style>
 </head>
 <body>
@@ -715,12 +757,15 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                 if self.newest_date and self.oldest_date:
                     f.write(f'<p class="card-text">Year range: <strong>{self.oldest_date} - {self.newest_date}</strong></p>')
                 
-                # Count posts by year
+                # Count posts by year and videos
                 years = {}
+                videos_count = 0
                 for post in posts:
                     year = post.get('_year')
                     if year:
                         years[year] = years.get(year, 0) + 1
+                    if post.get('_videosrc') and post.get('_videosrc') != 'None':
+                        videos_count += 1
                 
                 if years:
                     f.write('<p class="card-text">Posts by year:</p>')
@@ -728,6 +773,8 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                     for year in sorted(years.keys(), reverse=True):
                         f.write(f'<div class="d-flex justify-content-between"><span>{year}</span><span>{years[year]}</span></div>')
                     f.write('</div>')
+                
+                f.write(f'<p class="card-text mt-3">Posts with videos: <strong>{videos_count}</strong></p>')
                 
                 f.write('''
                         </div>
@@ -739,7 +786,7 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                             <h5 class="card-title">Files Generated</h5>
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">posts_complete.json (main data)</li>
-                                <li class="list-group-item">materias.js (for website)</li>
+                                <li class="list-group-item">materias.js (for website with YouTube videos)</li>
                                 <li class="list-group-item">posts_preview.html (this preview)</li>
                                 <li class="list-group-item">scraping_stats.json (statistics)</li>
                             </ul>
@@ -762,12 +809,19 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                     if len(content) > 150:
                         content = content[:147] + '...'
                     
+                    has_video = post.get('_videosrc') and post.get('_videosrc') != 'None'
+                    has_image = post.get('_imgsrc') and post.get('_imgsrc') != 'None'
+                    
                     f.write(f'''
         <div class="card post-card shadow-sm">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <h6 class="card-title post-title mb-0">{title}</h6>
-                    <span class="badge year-badge">{year}</span>
+                    <div>
+                        <span class="badge year-badge">{year}</span>
+                        {f'<span class="badge video-badge ms-1">Video</span>' if has_video else ''}
+                        {f'<span class="badge bg-secondary ms-1">Image</span>' if has_image and not has_video else ''}
+                    </div>
                 </div>
                 <div class="text-muted small mb-2">
                     <span class="me-2">{html.escape(post.get('_data', ''))}</span>
@@ -779,8 +833,11 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                     <span class="me-2">ID: {post.get('_id', '')}</span>
 ''')
                     
-                    img_src = post.get('_imgsrc', '')
-                    if img_src and img_src != 'None':
+                    if has_video:
+                        video_src = post.get('_videosrc', '')
+                        f.write(f'<div class="url-truncate" title="{html.escape(video_src)}">Video: {html.escape(video_src[:50])}...</div>')
+                    elif has_image:
+                        img_src = post.get('_imgsrc', '')
                         if img_src.startswith('data:'):
                             f.write(f'<div class="url-truncate" title="Base64 image (truncated)">Image: [Base64 data]</div>')
                         else:
@@ -795,7 +852,8 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                 f.write(f'''
         <div class="alert alert-info mt-4">
             <strong>Showing {min(max_posts, len(posts))} of {len(posts)} posts</strong><br>
-            Full data available in <code>materias.js</code> and <code>posts_complete.json</code>
+            Full data available in <code>materias.js</code> and <code>posts_complete.json</code><br>
+            Posts with videos: {videos_count} | Posts with images: {len([p for p in posts if p.get('_imgsrc') and p.get('_imgsrc') != 'None'])}
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -818,7 +876,8 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                 'http_urls': 0,
                 'data_urls': 0,
                 'no_image': 0
-            }
+            },
+            'videos_count': 0
         }
         
         # Count posts by year and URL types
@@ -834,6 +893,10 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
                 stats['url_types']['data_urls'] += 1
             elif img_src.startswith('http'):
                 stats['url_types']['http_urls'] += 1
+            
+            # Count videos
+            if post.get('_videosrc') and post.get('_videosrc') != 'None':
+                stats['videos_count'] += 1
         
         try:
             with open('scraping_stats.json', 'w', encoding='utf-8') as f:
@@ -846,7 +909,7 @@ console.log('Loaded ' + totalPosts + ' posts (' + oldestYear + ' - ' + newestYea
 def main():
     """Main function"""
     print("=" * 70)
-    print("COMPLETE ARCHIVE SCRAPER (2024 to 2008) - FIXED VERSION")
+    print("Total Vdp Scraper (2024 to 2008) - ALL POSTS VERSION")
     print("Starting from April 2024, scraping back to 2008")
     print("=" * 70)
     
@@ -854,16 +917,17 @@ def main():
     
     print("\nStarting URL: http://www.vermelhodepaixao.com.br/search?updated-max=2024-04-12T18:29:00-03:00&max-results=56")
     print("Target oldest year: 2008")
-    print("Max pages: 1000")
+    print("Max pages: 5000")
     print("\nThis will scrape from 2024 backwards until reaching 2008.")
-    print("Checkpoints saved every 10 pages.")
+    print("Collecting ALL posts (no duplicate filtering during scraping)")
+    print("Checkpoints saved every 100 pages.")
     print("Press Ctrl+C to stop and save progress.\n")
     
     input("Press Enter to start scraping...")
     
     try:
         # Run scraper
-        scraper.scrape_2024_to_2008(max_pages=1000)
+        scraper.scrape_2024_to_2008(max_pages=5000)
         
         # Save final output
         count = scraper.save_single_output()
@@ -872,24 +936,29 @@ def main():
         print(f"SCRAPING COMPLETE! {count} posts saved")
         if scraper.newest_date and scraper.oldest_date:
             print(f"Year range: {scraper.oldest_date} - {scraper.newest_date}")
+        
+        # Count videos
+        videos_count = sum(1 for post in scraper.scraped_posts if post.get('_videosrc') and post.get('_videosrc') != 'None')
+        print(f"YouTube videos found: {videos_count}")
+        
         print("\nSingle file output:")
         print("  - posts_complete.json (all posts in one JSON file)")
-        print("  - materias.js (all posts in one JS file for website)")
-        print("  - posts_preview.html (HTML preview)")
-        print("  - scraping_stats.json (statistics)")
+        print("  - materias.js (all posts in one JS file for website WITH VIDEOS)")
+        print("  - posts_preview.html (HTML preview with video indicators)")
+        print("  - scraping_stats.json (statistics including video count)")
         print("=" * 70)
         
         print("\nKey improvements:")
-        print("  1. Proper URL encoding/decoding")
-        print("  2. Base64 data URL validation")
-        print("  3. Enhanced JSON/JS escaping")
-        print("  4. Unicode line separator handling")
-        print("  5. JavaScript file validation")
+        print("  1. Collects ALL posts without duplicate filtering during scraping")
+        print("  2. Only removes duplicates by ID in final output")
+        print("  3. Continues scraping even after reaching 2008 to get all posts")
+        print("  4. Increased max pages to 5000")
         
         print("\nNext steps:")
         print("1. Use 'materias.js' in your website (replace existing file)")
-        print("2. Check 'posts_preview.html' to verify the data")
-        print("3. 'posts_complete.json' is your backup")
+        print("2. Update 'main.js' to display YouTube videos")
+        print("3. Check 'posts_preview.html' to verify all posts were collected")
+        print("4. 'posts_complete.json' is your backup")
         
     except KeyboardInterrupt:
         print("\n\nScraping interrupted by user.")

@@ -35,6 +35,105 @@ if (vp_width > 768) {
     alert.classList.add('mt-3');
 }
 
+// Helper function to add image if available
+function addImageIfAvailable(artigo, container) {
+    if (artigo.imgsrc && artigo.imgsrc !== 'None') {
+        try {
+            var img = document.createElement("img");
+            img.setAttribute("class", "card-img-top mt-2 mb-2");
+            img.setAttribute("src", artigo.imgsrc);
+            img.setAttribute("alt", artigo.titulo.substring(0, 50));
+            img.setAttribute("loading", "lazy");
+            if (artigo.imgwth && artigo.imgwth !== 'None') {
+                img.setAttribute("width", artigo.imgwth);
+            }
+            if (artigo.imghgt && artigo.imghgt !== 'None') {
+                img.setAttribute("height", artigo.imghgt);
+            }
+            addElement(container, img);
+        } catch (e) {
+            console.log("Error loading image:", e);
+        }
+    }
+}
+
+// Helper function to extract YouTube video ID
+function extractYouTubeVideoId(url) {
+    if (!url) return null;
+    
+    const patterns = [
+        /(?:youtube\.com\/embed\/)([^?&]+)/,
+        /(?:youtu\.be\/)([^?&]+)/,
+        /(?:youtube\.com\/watch\?v=)([^?&]+)/,
+        /(?:youtube\.com\/v\/)([^?&]+)/,
+        /(?:youtube\.com\/embed\/)([^?&]+)/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+    }
+    
+    return null;
+}
+
+// Helper function to create proper YouTube embed URL
+function createYouTubeEmbedUrl(videoId, options = {}) {
+    if (!videoId) return null;
+    
+    let embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    const params = [];
+    
+    if (options.autoplay) params.push('autoplay=1');
+    if (options.loop) params.push('loop=1');
+    if (options.controls === false) params.push('controls=0');
+    if (options.modestbranding) params.push('modestbranding=1');
+    
+    if (params.length > 0) {
+        embedUrl += '?' + params.join('&');
+    }
+    
+    return embedUrl;
+}
+
+// Updated function to handle video embeds more robustly
+function createVideoEmbed(videosrc, videowth, videohgt, title) {
+    if (!videosrc || videosrc === 'None') return null;
+    
+    // Check if it's a YouTube URL
+    const videoId = extractYouTubeVideoId(videosrc);
+    
+    if (videoId) {
+        // Create YouTube embed URL with proper parameters
+        const embedUrl = createYouTubeEmbedUrl(videoId, {
+            modestbranding: true,
+            controls: true,
+            autoplay: false
+        });
+        
+        const videoContainer = document.createElement("div");
+        videoContainer.setAttribute("class", "embed-responsive embed-responsive-16by9 mt-2 mb-2");
+        
+        const iframe = document.createElement("iframe");
+        iframe.setAttribute("class", "embed-responsive-item");
+        iframe.setAttribute("src", embedUrl);
+        iframe.setAttribute("title", title);
+        iframe.setAttribute("frameborder", "0");
+        iframe.setAttribute("allowfullscreen", "");
+        iframe.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+        
+        // Set responsive width/height
+        iframe.setAttribute("width", "100%");
+        iframe.setAttribute("height", "100%");
+        
+        videoContainer.appendChild(iframe);
+        return videoContainer;
+    }
+    
+    // Handle other video sources (if needed in the future)
+    return null;
+}
+
 // Create a single post card
 function createPostCard(artigo) {
     var divmain = document.getElementById("_artigos");
@@ -70,10 +169,7 @@ function createPostCard(artigo) {
     var divcontent = document.createElement("div");
     divcontent.setAttribute("class", "card-body");
     
-    var contentPreview = artigo.content.length > 200 ?
-        artigo.content.substring(0, 200) + "..." :
-        artigo.content;
-    var textcontent = document.createTextNode(contentPreview);
+    var textcontent = document.createTextNode(artigo.content);
     
     // Card footer with metadata
     var cardfooter = document.createElement("footer");
@@ -110,24 +206,30 @@ function createPostCard(artigo) {
     addElement(h5title, link_title);
     addElement(link_title, ctitle);
     
-    // Add image if available
-    if (artigo.imgsrc && artigo.imgsrc !== 'None') {
+    // Add video if available (priority over image)
+    if (artigo.videosrc && artigo.videosrc !== 'None' && artigo.videosrc !== '') {
         try {
-            var img = document.createElement("img");
-            img.setAttribute("class", "card-img-top mt-2 mb-2");
-            img.setAttribute("src", artigo.imgsrc);
-            img.setAttribute("alt", artigo.titulo.substring(0, 50));
-            img.setAttribute("loading", "lazy"); // Lazy load images
-            if (artigo.imgwth && artigo.imgwth !== 'None') {
-                img.setAttribute("width", artigo.imgwth);
+            const videoEmbed = createVideoEmbed(
+                artigo.videosrc,
+                artigo.videowth,
+                artigo.videohgt,
+                artigo.titulo.substring(0, 50)
+            );
+            
+            if (videoEmbed) {
+                addElement(divcards, videoEmbed);
+            } else {
+                // Fall back to image if video creation fails
+                addImageIfAvailable(artigo, divcards);
             }
-            if (artigo.imghgt && artigo.imghgt !== 'None') {
-                img.setAttribute("height", artigo.imghgt);
-            }
-            addElement(divcards, img);
         } catch (e) {
-            console.log("Error loading image:", e);
+            console.log("Error loading video:", e);
+            // Fall back to image if video fails
+            addImageIfAvailable(artigo, divcards);
         }
+    } else {
+        // Add image if available (only if no video)
+        addImageIfAvailable(artigo, divcards);
     }
     
     addElement(divcards, divcontent);
@@ -164,7 +266,10 @@ function loadPostsBatch(startIndex, batchSize) {
             author: postsToLoad[i]._autor,
             imgsrc: postsToLoad[i]._imgsrc,
             imgwth: postsToLoad[i]._imgwth,
-            imghgt: postsToLoad[i]._imghgt
+            imghgt: postsToLoad[i]._imghgt,
+            videosrc: postsToLoad[i]._videosrc || 'None',
+            videowth: postsToLoad[i]._videowth || 'None',
+            videohgt: postsToLoad[i]._videohgt || 'None'
         };
         
         createPostCard(artigo);
@@ -186,7 +291,7 @@ function showLoading(show) {
     }
 }
 
-// Show/hide no more posts message
+// Show/hide no more posts message - THIS WAS MISSING
 function showNoMorePosts(show) {
     const noMore = document.getElementById("noMorePosts");
     const loading = document.getElementById("loadingIndicator");
@@ -287,6 +392,7 @@ function resetPosts() {
     hasMore = true;
     
     showNoMorePosts(false);
+    showLoading(false);
     loadMorePosts(); // Load first batch
 }
 
