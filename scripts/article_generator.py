@@ -1092,14 +1092,53 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         except Exception as e:
             print(f"   Error saving JS format: {e}")
 
+
 # Initialize Flask app
 app = Flask(__name__)
-# TEMPORARY - Allow all origins for testing
-CORS(app, origins="*")
 
-# Global generator instance - initialized lazily with thread safety
+# CRITICAL FIX: Proper CORS configuration
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
+# Additional CORS headers for all responses
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    return response
+
+# EAGER INITIALIZATION - Initialize on startup instead of lazy
+print("\n" + "="*70)
+print("INITIALIZING GENERATOR ON STARTUP...")
+print("="*70)
+
 generator_instance = None
-generator_lock = threading.Lock()
+try:
+    generator_instance = ArticleGenerator(
+        api_key="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"
+    )
+    
+    if generator_instance and generator_instance.client and generator_instance.available_models:
+        print(f"✓ Generator initialized successfully with model: {generator_instance.model_name}")
+    else:
+        print("⚠ Warning: Generator partially initialized")
+        if generator_instance:
+            print(f"   Client available: {generator_instance.client is not None}")
+            print(f"   Models available: {len(generator_instance.available_models)}")
+        
+except Exception as e:
+    print(f"✗ Error initializing generator: {e}")
+    import traceback
+    traceback.print_exc()
+    generator_instance = None
+
+print("="*70 + "\n")
 
 # Root endpoint for Render.com health checks
 @app.route('/', methods=['GET'])
@@ -1115,42 +1154,18 @@ def root():
             'models': '/api/models - List available models',
             'debug': '/api/debug - Debug environment (GET)'
         },
-        'note': 'Generator initializes lazily on first /api/generate request',
+        'note': 'Generator initialized on startup',
         'deployment': 'Render.com',
         'python_version': sys.version.split()[0]
     })
 
-# Lazy initialization function with thread safety
-def get_generator():
-    """Initialize the ArticleGenerator only when needed"""
-    global generator_instance, generator_lock
-    
-    with generator_lock:
-        if generator_instance is None:
-            try:
-                print("Initializing ArticleGenerator...")
-                generator_instance = ArticleGenerator(
-                    api_key="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"
-                )
-                
-                if generator_instance and generator_instance.client and generator_instance.available_models:
-                    print(f"✓ Generator initialized successfully with model: {generator_instance.model_name}")
-                else:
-                    print("⚠ Warning: Generator partially initialized")
-                    print(f"   Client available: {generator_instance.client is not None if generator_instance else False}")
-                    print(f"   Models available: {len(generator_instance.available_models) if generator_instance else 0}")
-                    
-            except Exception as e:
-                print(f"✗ Error initializing generator: {e}")
-                import traceback
-                traceback.print_exc()
-                generator_instance = None
-    
-    return generator_instance
-
-@app.route('/api/generate', methods=['POST'])
+@app.route('/api/generate', methods=['POST', 'OPTIONS'])
 def generate_api():
-    generator = get_generator()
+    # Handle preflight
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    generator = generator_instance
     
     if not generator:
         return jsonify({
