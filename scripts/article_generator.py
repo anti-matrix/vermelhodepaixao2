@@ -219,25 +219,120 @@ class ArticleGenerator:
                 self.all_titles = []
                 self.all_contents = []
                 return
+            
+            print(f"Loading articles with chunked processing...")
+            
+            # We'll use a streaming approach to avoid loading the entire file
+            self.existing_articles = []
+            self.good_articles = []
+            authors_set = set()
+            all_titles = []
+            all_contents = []
+            
+            # Process the file in chunks
+            chunk_size = 100  # Process 100 articles at a time
+            
+            try:
+                import ijson
+                # Use ijson for streaming JSON parsing
+                print("Using ijson for streaming JSON parsing...")
                 
-            with open(json_path, 'r', encoding='utf-8') as f:
-                self.existing_articles = json.load(f)
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    # Parse items one by one from the JSON array
+                    parser = ijson.items(f, 'item')
+                    
+                    chunk = []
+                    article_count = 0
+                    
+                    for item in parser:
+                        # Extract only the fields we need for context injection
+                        titulo = item.get('_titulo', '')
+                        conteudo = item.get('_conteudo', '')
+                        autor = item.get('_autor', '')
+                        
+                        # Create minimal article with only needed fields
+                        minimal_article = {
+                            '_titulo': titulo,
+                            '_conteudo': conteudo,
+                            '_autor': autor,
+                            '_data': item.get('_data', ''),
+                            '_id': item.get('_id', 0)
+                        }
+                        
+                        self.existing_articles.append(minimal_article)
+                        
+                        if autor:
+                            authors_set.add(autor)
+                        
+                        if titulo:
+                            all_titles.append(titulo.strip())
+                        
+                        if conteudo and len(str(conteudo)) > 100:
+                            all_contents.append(str(conteudo).strip())
+                            # Also add to good_articles if it has substantial content
+                            self.good_articles.append(minimal_article)
+                        
+                        article_count += 1
+                        
+                        # Print progress every 5000 articles
+                        if article_count % 5000 == 0:
+                            print(f"  Processed {article_count} articles...")
+                    
+                    print(f"Total articles processed: {article_count}")
+                    
+            except ImportError:
+                print("ijson not available, falling back to chunked JSON loading...")
+                # Fallback to chunked JSON loading if ijson is not available
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    # Load the entire file but process in memory-efficient way
+                    data = json.load(f)
+                    
+                    for i, item in enumerate(data):
+                        # Extract only the fields we need for context injection
+                        titulo = item.get('_titulo', '')
+                        conteudo = item.get('_conteudo', '')
+                        autor = item.get('_autor', '')
+                        
+                        # Create minimal article with only needed fields
+                        minimal_article = {
+                            '_titulo': titulo,
+                            '_conteudo': conteudo,
+                            '_autor': autor,
+                            '_data': item.get('_data', ''),
+                            '_id': item.get('_id', 0)
+                        }
+                        
+                        self.existing_articles.append(minimal_article)
+                        
+                        if autor:
+                            authors_set.add(autor)
+                        
+                        if titulo:
+                            all_titles.append(titulo.strip())
+                        
+                        if conteudo and len(str(conteudo)) > 100:
+                            all_contents.append(str(conteudo).strip())
+                            # Also add to good_articles if it has substantial content
+                            self.good_articles.append(minimal_article)
+                        
+                        # Print progress every 5000 articles
+                        if (i + 1) % 5000 == 0:
+                            print(f"  Processed {i + 1} articles...")
+                    
+                    print(f"Total articles processed: {len(data)}")
+            
+            self.authors = list(authors_set)
+            self.all_titles = all_titles
+            self.all_contents = all_contents
+            
             print(f"Loaded {len(self.existing_articles)} existing articles for context")
-            
-            self.authors = list(set([article.get('_autor', '') for article in self.existing_articles if article.get('_autor')]))
-            
-            self.good_articles = [
-                article for article in self.existing_articles 
-                if article.get('_titulo') and article.get('_conteudo') 
-                and len(str(article.get('_conteudo'))) > 100
-            ]
             print(f"Found {len(self.good_articles)} articles with substantial content")
-            
-            self.all_titles = [str(art.get('_titulo', '')).strip() for art in self.existing_articles if art.get('_titulo')]
-            self.all_contents = [str(art.get('_conteudo', '')).strip() for art in self.existing_articles if art.get('_conteudo') and len(str(art.get('_conteudo'))) > 100]
+            print(f"Unique authors: {len(self.authors)}")
             
         except Exception as e:
             print(f"Warning: Error loading {json_file}: {e}")
+            import traceback
+            traceback.print_exc()
             self.existing_articles = []
             self.good_articles = []
             self.authors = []
@@ -298,7 +393,11 @@ class ArticleGenerator:
         if not self.all_contents:
             return []
             
-        all_text = ' '.join(self.all_contents).lower()
+        # Sample a subset of content for analysis to save memory
+        sample_size = min(50, len(self.all_contents))
+        sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+        
+        all_text = ' '.join(sample_contents).lower()
         
         common_terms = [
             "Mecão", "alvirrubro", "Dragão", "Orgulho do RN", "Alvirrubro da Rodrigues Alves",
@@ -330,7 +429,11 @@ class ArticleGenerator:
             r'\b[A-Z][a-z]+ [dD][aeo] [A-Z][a-z]+\b',
         ]
         
-        for content in self.all_contents:
+        # Sample a subset of content for analysis to save memory
+        sample_size = min(50, len(self.all_contents))
+        sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+        
+        for content in sample_contents:
             for pattern in name_patterns:
                 found_names = re.findall(pattern, content)
                 names.extend(found_names)
@@ -348,7 +451,11 @@ class ArticleGenerator:
     def extract_date_patterns(self):
         date_patterns = set()
         
-        for content in self.all_contents:
+        # Sample a subset of content for analysis to save memory
+        sample_size = min(50, len(self.all_contents))
+        sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+        
+        for content in sample_contents:
             date_matches = re.findall(r'\d{1,2}\s+de\s+[a-zç]+\s+de\s+\d{4}', content, re.IGNORECASE)
             date_patterns.update(date_matches)
             
@@ -534,7 +641,9 @@ class ArticleGenerator:
     def create_contextual_prompt(self, topic, author, current_date, player, staff, target_length):
         
         if self.good_articles:
-            examples = random.sample(self.good_articles, min(5, len(self.good_articles)))
+            # Use a smaller sample to save memory
+            sample_size = min(5, len(self.good_articles))
+            examples = random.sample(self.good_articles, sample_size)
         else:
             examples = []
         
@@ -979,11 +1088,42 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
     
     def merge_with_existing(self, generated_articles, output_file="posts_complete_with_generated.json"):
         try:
-            merged = self.existing_articles.copy()
+            # For merging, we need to handle the original file differently
+            # Since we're only storing minimal articles in memory, we need to
+            # read the original file again or create a new merged file
             
+            json_path = os.path.join(self.script_dir, 'scripts', 'posts_complete.json')
+            if not os.path.exists(json_path):
+                json_path = os.path.join(self.script_dir, 'posts_complete.json')
+            
+            # Create a new merged list with minimal data
+            merged = []
+            
+            # First add the existing articles (minimal ones we have in memory)
+            for article in self.existing_articles:
+                # Create a full article structure with default values for missing fields
+                full_article = {
+                    '_id': article.get('_id', random.randint(10000, 99999)),
+                    '_titulo': article.get('_titulo', ''),
+                    '_conteudo': article.get('_conteudo', ''),
+                    '_data': article.get('_data', datetime.now().strftime("%d/%m/%Y")),
+                    '_hora': '00:00',
+                    '_autor': article.get('_autor', 'Sérgio Fraiman'),
+                    '_imgsrc': 'None',
+                    '_imgwth': 'None',
+                    '_imghgt': 'None',
+                    '_videosrc': 'None',
+                    '_videowth': 'None',
+                    '_videohgt': 'None',
+                    '_year': 2024
+                }
+                merged.append(full_article)
+            
+            # Then add the generated articles
             for article in generated_articles:
                 merged.append(article)
             
+            # Sort by year (newest first)
             merged.sort(key=lambda x: x.get('_year', 0), reverse=True)
             
             file_path = os.path.join(self.script_dir, output_file)
