@@ -426,7 +426,7 @@ function showNoMorePosts(show) {
 function showGenerationStatus(show, message = ErrorMsgs.generating) {
     if (generation_status && generation_message) {
         if (show) {
-            generation_message.textContent = message;
+            //generation_message.textContent = message;
             generation_status.classList.remove("hidden_");
         } else {
             generation_status.classList.add("hidden_");
