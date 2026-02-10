@@ -1,3 +1,5 @@
+// vdpgpt.js - FIXED VERSION (No article duplication)
+
 // Configuration
 const vp_width = window.innerWidth;
 const addElement = (f, c) => { f.appendChild(c); };
@@ -150,8 +152,8 @@ function createVideoEmbed(videosrc, videowth, videohgt, title) {
     return null;
 }
 
-// Create a single post card
-function createPostCard(artigo) {
+// Create a single post card - MODIFIED TO NOT AUTO-APPEND
+function createPostCard(artigo, shouldAppend = true) {
     var divmain = document.getElementById("_artigos");
     
     // Create card container
@@ -215,8 +217,11 @@ function createPostCard(artigo) {
     spanauthor.setAttribute("id", "author_");
     var contentauthor = document.createTextNode(artigo.author);
     
-    // Assemble the card
-    addElement(divmain, divcards);
+    // Assemble the card (but don't append automatically)
+    if (shouldAppend) {
+        addElement(divmain, divcards);
+    }
+    
     addElement(divcards, cardheader);
     addElement(cardheader, h5title);
     addElement(h5title, link_title);
@@ -282,7 +287,7 @@ function loadPostsBatch(startIndex, batchSize) {
     return endIndex;
 }
 
-// Create and display a single generated article immediately
+// Create and display a single generated article immediately - FIXED VERSION
 function displaySingleGeneratedArticle(article, index, total, generationInfo = {}) {
     // Clean the title by removing "**TÍTULO:**", "TÍTULO:", and similar patterns
     let cleanedTitle = article._titulo || '';
@@ -358,20 +363,29 @@ function displaySingleGeneratedArticle(article, index, total, generationInfo = {
         videohgt: article._videohgt || 'None'
     };
     
-    // Add to beginning of allArticles array
+    // Check if this article already exists in allArticles to prevent duplicates
+    const articleExists = allArticles.some(existingArticle => 
+        existingArticle.id === artigo.id || 
+        existingArticle.titulo === artigo.titulo
+    );
+    
+    if (articleExists) {
+        console.log(`⏭️  Artigo ${index + 1}/${total} já existe, pulando duplicata`);
+        return;
+    }
+    
+    // Add to beginning of allArticles array - BUT DON'T RELOAD ALL ARTICLES
     allArticles.unshift(artigo);
     
     // Get posts container
     const postsContainer = document.getElementById("_artigos");
     
-    // Create the card - NOTE: createPostCard() already appends to DOM at line 219
-    // So we get the appended element and move it to the top
-    createPostCard(artigo);
-    
-    // The card was appended at the end, so move it to the top
-    const lastCard = postsContainer.lastElementChild;
-    if (lastCard && postsContainer.firstChild !== lastCard) {
-        postsContainer.insertBefore(lastCard, postsContainer.firstChild);
+    // Create the card and manually insert it at the top
+    const cardElement = createPostCard(artigo, false); // Create but don't append
+    if (postsContainer.firstChild) {
+        postsContainer.insertBefore(cardElement, postsContainer.firstChild);
+    } else {
+        postsContainer.appendChild(cardElement);
     }
     
     // Log generation details for this specific article
@@ -380,9 +394,6 @@ function displaySingleGeneratedArticle(article, index, total, generationInfo = {
     if (article._response_time) {
         console.log(`   Tempo de geração no servidor: ${article._response_time.toFixed(2)}s`);
     }
-    
-    // Show success message for this article
-    //showAlert(`Artigo ${index + 1}/${total} gerado: "${artigo.titulo.substring(0, 50)}..."`, 'success');
 }
 
 // Show/hide loading indicator
@@ -415,7 +426,7 @@ function showNoMorePosts(show) {
 function showGenerationStatus(show, message = ErrorMsgs.generating) {
     if (generation_status && generation_message) {
         if (show) {
-            //generation_message.textContent = message;
+            generation_message.textContent = message;
             generation_status.classList.remove("hidden_");
         } else {
             generation_status.classList.add("hidden_");
@@ -634,7 +645,7 @@ async function generateArticles(query) {
                     // If this is the last article, show final summary
                     if (index === data.articles.length - 1) {
                         setTimeout(() => {
-                            console.log(`🎉 GERAÇÃO COMPLETA!`);
+                            console.log(`🎉 GERAÇÃO COMPLETE!`);
                             console.log(`   Total de artigos recebidos: ${data.articles.length}`);
                             console.log(`   Artigos exibidos: ${displayedCount}`);
                             console.log(`   Artigos ignorados: ${data.articles.length - displayedCount}`);
@@ -645,7 +656,7 @@ async function generateArticles(query) {
                             
                             // Show final alert only if at least one article was displayed
                             if (displayedCount > 0) {
-                                //showAlert(`${displayedCount} artigo(s) gerado(s) com sucesso!`, 'success');
+                                showAlert(`${displayedCount} artigo(s) gerado(s) com sucesso!`, 'success');
                             } else {
                                 showAlert('Nenhum artigo válido foi gerado. Tente novamente.', 'warning');
                             }
