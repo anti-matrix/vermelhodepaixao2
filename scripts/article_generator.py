@@ -1094,8 +1094,8 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
 
 # Initialize Flask app
 app = Flask(__name__)
-# PRODUCTION ONLY - Your Vercel frontend
-CORS(app, origins=["https://vdpx.vercel.app"])
+# TEMPORARY - Allow all origins for testing
+CORS(app, origins="*")
 
 # Global generator instance - initialized lazily with thread safety
 generator_instance = None
