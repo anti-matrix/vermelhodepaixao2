@@ -11,7 +11,7 @@ const ErrorMsgs = {
 const pageUrl = "xpage.html?id=";
 
 // API Configuration
-const API_ENDPOINT = 'vermelhodepaixao2-production.up.railway.app/api/generate';
+const API_ENDPOINT = 'https://vermelhodepaixaox.onrender.com/api/generate';
 const LOCAL_API_ENDPOINT = 'http://localhost:5000/api/generate'; // Alternative localhost
 
 // DOM Elements
