@@ -14,8 +14,8 @@ import base64
 import urllib.parse
 import os
 
-# ADDED FOR RAILWAY DEPLOYMENT: PORT from environment variable
-PORT = int(os.environ.get('PORT', 5000))
+# RENDER.COM DEPLOYMENT: Hard-coded port for Render (10000 default)
+PORT = 10000  # Render default port
 
 now = datetime.now()
 article_mindate = now.strftime("%d, %m, %Y")
@@ -1054,7 +1054,7 @@ CORS(app)
 generator_instance = None
 generator_lock = threading.Lock()
 
-# Root endpoint for Railway health checks - RESPONDS INSTANTLY
+# Root endpoint for Render.com health checks - RESPONDS INSTANTLY
 @app.route('/', methods=['GET'])
 def root():
     """Root endpoint - responds immediately without any initialization"""
@@ -1067,7 +1067,8 @@ def root():
             'generate': '/api/generate - Generate articles (POST)',
             'models': '/api/models - List available models'
         },
-        'note': 'Generator initializes lazily on first /api/generate request'
+        'note': 'Generator initializes lazily on first /api/generate request',
+        'deployment': 'Render.com'
     })
 
 # Lazy initialization function with thread safety
@@ -1191,7 +1192,8 @@ def health_check():
             'available_models': generator.available_models,
             'image_generation': 'Enabled with Freepik API (Flux Kontext Pro)',
             'flask_running': True,
-            'generator_ready': True
+            'generator_ready': True,
+            'deployment': 'Render.com'
         })
     else:
         # Return 200 even if generator not initialized - Flask is running
@@ -1200,7 +1202,8 @@ def health_check():
             'status': 'API is running',
             'flask_running': True,
             'generator_ready': False,
-            'message': 'Generator will initialize on first /api/generate request'
+            'message': 'Generator will initialize on first /api/generate request',
+            'deployment': 'Render.com'
         }), 200
 
 @app.route('/api/models', methods=['GET'])
@@ -1224,9 +1227,10 @@ def run_web_server():
     print("=" * 70)
     print("VERMELHO DE PAIXÃO - WEB API SERVER")
     print("AI Article Generator with Freepik Image Generation")
+    print("Deployment: Render.com")
     print("=" * 70)
     
-    print(f"\nFlask server starting...")
+    print(f"\nFlask server starting on port {PORT}...")
     print(f"ArticleGenerator will initialize on first API request")
     
     print("\n" + "=" * 70)
@@ -1245,18 +1249,19 @@ def run_web_server():
     print(f"Press Ctrl+C to stop")
     print("=" * 70)
     
-    # MODIFIED: Use PORT variable from environment (for Railway)
+    # For Render.com deployment
     app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False, threaded=True)
 
-# Startup confirmation for Gunicorn deployment
+# Startup confirmation for Render.com deployment
 print("=" * 70)
 print("✓ Flask app module loaded successfully")
-print(f"✓ PORT configured: {PORT}")
+print(f"✓ PORT configured: {PORT} (Render.com)")
 print(f"✓ Registered routes:")
 for rule in app.url_map.iter_rules():
     methods = ', '.join(sorted(rule.methods - {'HEAD', 'OPTIONS'}))
     print(f"  {rule.rule:40s} [{methods}]")
 print("✓ App ready to serve requests (Generator initializes lazily)")
+print("✓ Deployment: Render.com")
 print("=" * 70)
 
 if __name__ == "__main__":
@@ -1266,6 +1271,7 @@ if __name__ == "__main__":
         print("=" * 70)
         print("VERMELHO DE PAIXÃO - ARTICLE GENERATOR")
         print("Image Generation with Freepik API (Flux Kontext Pro)")
+        print("Deployment: Render.com")
         print("=" * 70)
         
         generator = ArticleGenerator(
