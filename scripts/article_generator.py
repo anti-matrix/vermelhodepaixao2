@@ -43,6 +43,11 @@ class ArticleGenerator:
         self.mentioned_names = []
         self.date_references = []
         
+        # NEW: Batch processing attributes
+        self.article_batches = []  # Store article batches for better context injection
+        self.processed_batches = 0
+        self.max_batch_size = 100  # Maximum batch size for context injection
+        
         now = datetime.now()
         self.article_mindate = now.strftime("%d, %m, %Y")
         self.api_key = api_key
@@ -228,21 +233,23 @@ class ArticleGenerator:
             authors_set = set()
             all_titles = []
             all_contents = []
+            self.article_batches = []  # NEW: Initialize batches
             
             # Process the file in chunks
-            chunk_size = 100  # Process 100 articles at a time
+            batch_size = 100  # Process 100 articles at a time for better context injection
             
             try:
                 import ijson
                 # Use ijson for streaming JSON parsing
-                print("Using ijson for streaming JSON parsing...")
+                print("Using ijson for streaming JSON parsing with batch size 100...")
                 
                 with open(json_path, 'r', encoding='utf-8') as f:
                     # Parse items one by one from the JSON array
                     parser = ijson.items(f, 'item')
                     
-                    chunk = []
+                    current_batch = []
                     article_count = 0
+                    batch_count = 0
                     
                     for item in parser:
                         # Extract only the fields we need for context injection
@@ -256,10 +263,18 @@ class ArticleGenerator:
                             '_conteudo': conteudo,
                             '_autor': autor,
                             '_data': item.get('_data', ''),
-                            '_id': item.get('_id', 0)
+                            '_id': item.get('_id', 0),
+                            '_imgsrc': item.get('_imgsrc', 'None'),
+                            '_imgwth': item.get('_imgwth', 'None'),
+                            '_imghgt': item.get('_imghgt', 'None'),
+                            '_videosrc': item.get('_videosrc', 'None'),
+                            '_videowth': item.get('_videowth', 'None'),
+                            '_videohgt': item.get('_videohgt', 'None'),
+                            '_year': item.get('_year', 2024)
                         }
                         
                         self.existing_articles.append(minimal_article)
+                        current_batch.append(minimal_article)
                         
                         if autor:
                             authors_set.add(autor)
@@ -274,11 +289,24 @@ class ArticleGenerator:
                         
                         article_count += 1
                         
+                        # When batch is full, store it and start a new one
+                        if len(current_batch) >= batch_size:
+                            self.article_batches.append(current_batch)
+                            current_batch = []
+                            batch_count += 1
+                            print(f"  Processed batch {batch_count} with {article_count} total articles...")
+                        
                         # Print progress every 5000 articles
                         if article_count % 5000 == 0:
                             print(f"  Processed {article_count} articles...")
                     
+                    # Add the last batch if it has articles
+                    if current_batch:
+                        self.article_batches.append(current_batch)
+                        batch_count += 1
+                    
                     print(f"Total articles processed: {article_count}")
+                    print(f"Total batches created: {batch_count}")
                     
             except ImportError:
                 print("ijson not available, falling back to chunked JSON loading...")
@@ -286,6 +314,9 @@ class ArticleGenerator:
                 with open(json_path, 'r', encoding='utf-8') as f:
                     # Load the entire file but process in memory-efficient way
                     data = json.load(f)
+                    
+                    current_batch = []
+                    batch_count = 0
                     
                     for i, item in enumerate(data):
                         # Extract only the fields we need for context injection
@@ -299,10 +330,18 @@ class ArticleGenerator:
                             '_conteudo': conteudo,
                             '_autor': autor,
                             '_data': item.get('_data', ''),
-                            '_id': item.get('_id', 0)
+                            '_id': item.get('_id', 0),
+                            '_imgsrc': item.get('_imgsrc', 'None'),
+                            '_imgwth': item.get('_imgwth', 'None'),
+                            '_imghgt': item.get('_imghgt', 'None'),
+                            '_videosrc': item.get('_videosrc', 'None'),
+                            '_videowth': item.get('_videowth', 'None'),
+                            '_videohgt': item.get('_videohgt', 'None'),
+                            '_year': item.get('_year', 2024)
                         }
                         
                         self.existing_articles.append(minimal_article)
+                        current_batch.append(minimal_article)
                         
                         if autor:
                             authors_set.add(autor)
@@ -315,11 +354,23 @@ class ArticleGenerator:
                             # Also add to good_articles if it has substantial content
                             self.good_articles.append(minimal_article)
                         
+                        # When batch is full, store it and start a new one
+                        if len(current_batch) >= batch_size:
+                            self.article_batches.append(current_batch)
+                            current_batch = []
+                            batch_count += 1
+                        
                         # Print progress every 5000 articles
                         if (i + 1) % 5000 == 0:
                             print(f"  Processed {i + 1} articles...")
                     
+                    # Add the last batch if it has articles
+                    if current_batch:
+                        self.article_batches.append(current_batch)
+                        batch_count += 1
+                    
                     print(f"Total articles processed: {len(data)}")
+                    print(f"Total batches created: {batch_count}")
             
             self.authors = list(authors_set)
             self.all_titles = all_titles
@@ -328,6 +379,7 @@ class ArticleGenerator:
             print(f"Loaded {len(self.existing_articles)} existing articles for context")
             print(f"Found {len(self.good_articles)} articles with substantial content")
             print(f"Unique authors: {len(self.authors)}")
+            print(f"Article batches available for context injection: {len(self.article_batches)}")
             
         except Exception as e:
             print(f"Warning: Error loading {json_file}: {e}")
@@ -338,6 +390,7 @@ class ArticleGenerator:
             self.authors = []
             self.all_titles = []
             self.all_contents = []
+            self.article_batches = []
     
     def analyze_article_patterns(self):
         print("Analyzing article patterns for context injection...")
@@ -354,48 +407,99 @@ class ArticleGenerator:
         print(f"  Closing sentences: {len(self.common_closings)}")
         print(f"  Common phrases: {len(self.common_phrases)}")
         print(f"  Mentioned names: {len(self.mentioned_names)}")
+        print(f"  Article batches available: {len(self.article_batches)}")
     
     def extract_title_patterns(self):
         patterns = []
-        for title in self.all_titles:
-            if len(title) > 10:
-                patterns.append(title)
+        # Use batches for better sampling
+        if self.article_batches:
+            # Sample from multiple batches
+            for batch in random.sample(self.article_batches, min(10, len(self.article_batches))):
+                for article in batch:
+                    titulo = article.get('_titulo', '')
+                    if titulo and len(titulo) > 10:
+                        patterns.append(titulo)
+        else:
+            # Fallback to all_titles
+            for title in self.all_titles:
+                if len(title) > 10:
+                    patterns.append(title)
         
-        return patterns[:20]
-    
+        return patterns[:30]  # Increased from 20 to 30
+        
     def extract_opening_sentences(self):
         openings = []
-        for content in self.all_contents:
-            first_part = content[:200].strip()
-            sentence_end = max(first_part.find('.'), first_part.find('!'), first_part.find('?'))
-            if sentence_end > 30:
-                opening = first_part[:sentence_end + 1].strip()
-                if len(opening) > 20:
-                    openings.append(opening)
+        # Use batches for better sampling
+        if self.article_batches:
+            # Sample from multiple batches
+            for batch in random.sample(self.article_batches, min(10, len(self.article_batches))):
+                for article in batch:
+                    content = article.get('_conteudo', '')
+                    if content:
+                        first_part = content[:200].strip()
+                        sentence_end = max(first_part.find('.'), first_part.find('!'), first_part.find('?'))
+                        if sentence_end > 30:
+                            opening = first_part[:sentence_end + 1].strip()
+                            if len(opening) > 20:
+                                openings.append(opening)
+        else:
+            # Fallback to all_contents
+            for content in self.all_contents:
+                first_part = content[:200].strip()
+                sentence_end = max(first_part.find('.'), first_part.find('!'), first_part.find('?'))
+                if sentence_end > 30:
+                    opening = first_part[:sentence_end + 1].strip()
+                    if len(opening) > 20:
+                        openings.append(opening)
         
         unique_openings = list(set(openings))
-        return unique_openings[:15]
+        return unique_openings[:20]  # Increased from 15 to 20
     
     def extract_closing_sentences(self):
         closings = []
-        for content in self.all_contents:
-            if len(content) > 200:
-                last_part = content[-200:].strip()
-                sentences = re.split(r'[.!?]', last_part)
-                if len(sentences) > 1 and len(sentences[-2]) > 20:
-                    closing = sentences[-2].strip() + '.'
-                    closings.append(closing)
+        # Use batches for better sampling
+        if self.article_batches:
+            # Sample from multiple batches
+            for batch in random.sample(self.article_batches, min(10, len(self.article_batches))):
+                for article in batch:
+                    content = article.get('_conteudo', '')
+                    if content and len(content) > 200:
+                        last_part = content[-200:].strip()
+                        sentences = re.split(r'[.!?]', last_part)
+                        if len(sentences) > 1 and len(sentences[-2]) > 20:
+                            closing = sentences[-2].strip() + '.'
+                            closings.append(closing)
+        else:
+            # Fallback to all_contents
+            for content in self.all_contents:
+                if len(content) > 200:
+                    last_part = content[-200:].strip()
+                    sentences = re.split(r'[.!?]', last_part)
+                    if len(sentences) > 1 and len(sentences[-2]) > 20:
+                        closing = sentences[-2].strip() + '.'
+                        closings.append(closing)
         
         unique_closings = list(set(closings))
-        return unique_closings[:15]
+        return unique_closings[:20]  # Increased from 15 to 20
     
     def extract_common_phrases(self):
-        if not self.all_contents:
+        if not self.all_contents and not self.article_batches:
             return []
             
-        # Sample a subset of content for analysis to save memory
-        sample_size = min(50, len(self.all_contents))
-        sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+        # Use batches for better sampling - increased sample size
+        sample_batches = min(15, len(self.article_batches)) if self.article_batches else 0
+        sample_contents = []
+        
+        if sample_batches > 0:
+            for batch in random.sample(self.article_batches, sample_batches):
+                for article in batch:
+                    content = article.get('_conteudo', '')
+                    if content:
+                        sample_contents.append(content)
+        else:
+            # Fallback to sampling from all_contents
+            sample_size = min(100, len(self.all_contents))
+            sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
         
         all_text = ' '.join(sample_contents).lower()
         
@@ -414,11 +518,11 @@ class ArticleGenerator:
         bigram_counts = Counter(bigrams)
         trigram_counts = Counter(trigrams)
         
-        common_bigrams = [phrase for phrase, count in bigram_counts.most_common(30) if count > 2]
-        common_trigrams = [phrase for phrase, count in trigram_counts.most_common(30) if count > 1]
+        common_bigrams = [phrase for phrase, count in bigram_counts.most_common(50) if count > 2]  # Increased from 30
+        common_trigrams = [phrase for phrase, count in trigram_counts.most_common(50) if count > 1]  # Increased from 30
         
         all_phrases = common_terms + common_bigrams + common_trigrams
-        return list(set(all_phrases))[:50]
+        return list(set(all_phrases))[:70]  # Increased from 50 to 70
     
     def extract_mentioned_names(self):
         names = []
@@ -429,14 +533,26 @@ class ArticleGenerator:
             r'\b[A-Z][a-z]+ [dD][aeo] [A-Z][a-z]+\b',
         ]
         
-        # Sample a subset of content for analysis to save memory
-        sample_size = min(50, len(self.all_contents))
-        sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+        # Use batches for better sampling - increased sample size
+        sample_batches = min(15, len(self.article_batches)) if self.article_batches else 0
         
-        for content in sample_contents:
-            for pattern in name_patterns:
-                found_names = re.findall(pattern, content)
-                names.extend(found_names)
+        if sample_batches > 0:
+            for batch in random.sample(self.article_batches, sample_batches):
+                for article in batch:
+                    content = article.get('_conteudo', '')
+                    if content:
+                        for pattern in name_patterns:
+                            found_names = re.findall(pattern, content)
+                            names.extend(found_names)
+        else:
+            # Fallback to sampling from all_contents
+            sample_size = min(100, len(self.all_contents))
+            sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+            
+            for content in sample_contents:
+                for pattern in name_patterns:
+                    found_names = re.findall(pattern, content)
+                    names.extend(found_names)
         
         predefined_names = [
             "João Pedro", "Matheusinho", "Alemão", "Felipe Azevedo", "Juninho", 
@@ -446,21 +562,35 @@ class ArticleGenerator:
         ]
         
         all_names = list(set(names + predefined_names))
-        return all_names[:30]
+        return all_names[:40]  # Increased from 30 to 40
     
     def extract_date_patterns(self):
         date_patterns = set()
         
-        # Sample a subset of content for analysis to save memory
-        sample_size = min(50, len(self.all_contents))
-        sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
+        # Use batches for better sampling - increased sample size
+        sample_batches = min(15, len(self.article_batches)) if self.article_batches else 0
         
-        for content in sample_contents:
-            date_matches = re.findall(r'\d{1,2}\s+de\s+[a-zç]+\s+de\s+\d{4}', content, re.IGNORECASE)
-            date_patterns.update(date_matches)
+        if sample_batches > 0:
+            for batch in random.sample(self.article_batches, sample_batches):
+                for article in batch:
+                    content = article.get('_conteudo', '')
+                    if content:
+                        date_matches = re.findall(r'\d{1,2}\s+de\s+[a-zç]+\s+de\s+\d{4}', content, re.IGNORECASE)
+                        date_patterns.update(date_matches)
+                        
+                        time_refs = re.findall(r'(hoje|ontem|amanhã|semana passada|mês passado|ano passado|próxima semana|próximo mês|próximo ano)', content, re.IGNORECASE)
+                        date_patterns.update(time_refs)
+        else:
+            # Fallback to sampling from all_contents
+            sample_size = min(100, len(self.all_contents))
+            sample_contents = random.sample(self.all_contents, sample_size) if len(self.all_contents) > sample_size else self.all_contents
             
-            time_refs = re.findall(r'(hoje|ontem|amanhã|semana passada|mês passado|ano passado|próxima semana|próximo mês|próximo ano)', content, re.IGNORECASE)
-            date_patterns.update(time_refs)
+            for content in sample_contents:
+                date_matches = re.findall(r'\d{1,2}\s+de\s+[a-zç]+\s+de\s+\d{4}', content, re.IGNORECASE)
+                date_patterns.update(date_matches)
+                
+                time_refs = re.findall(r'(hoje|ontem|amanhã|semana passada|mês passado|ano passado|próxima semana|próximo mês|próximo ano)', content, re.IGNORECASE)
+                date_patterns.update(time_refs)
         
         return list(date_patterns)
     
@@ -640,10 +770,17 @@ class ArticleGenerator:
     
     def create_contextual_prompt(self, topic, author, current_date, player, staff, target_length):
         
-        if self.good_articles:
-            # Use a smaller sample to save memory
-            sample_size = min(5, len(self.good_articles))
-            examples = random.sample(self.good_articles, sample_size)
+        # NEW: Use batches for better examples
+        if self.article_batches:
+            # Get examples from random batches
+            examples = []
+            batches_to_sample = min(3, len(self.article_batches))
+            for batch in random.sample(self.article_batches, batches_to_sample):
+                examples.extend(random.sample(batch, min(2, len(batch))))
+            examples = examples[:5]  # Limit to 5 examples
+        elif self.good_articles:
+            # Fallback to good_articles
+            examples = random.sample(self.good_articles, min(5, len(self.good_articles)))
         else:
             examples = []
         
@@ -669,25 +806,25 @@ class ArticleGenerator:
         patterns_text = ""
         if hasattr(self, 'common_title_patterns') and self.common_title_patterns:
             patterns_text += "PADRÕES DE TÍTULO COMUNS:\n"
-            for i, pattern in enumerate(self.common_title_patterns[:10], 1):
+            for i, pattern in enumerate(self.common_title_patterns[:15], 1):  # Increased from 10
                 patterns_text += f"  {i}. {pattern}\n"
             patterns_text += "\n"
         
         if hasattr(self, 'common_openings') and self.common_openings:
             patterns_text += "INÍCIOS DE FRASE COMUNS:\n"
-            for i, opening in enumerate(self.common_openings[:8], 1):
+            for i, opening in enumerate(self.common_openings[:12], 1):  # Increased from 8
                 patterns_text += f"  {i}. {opening}\n"
             patterns_text += "\n"
         
         if hasattr(self, 'common_closings') and self.common_closings:
             patterns_text += "FINAIS DE FRASE COMUNS:\n"
-            for i, closing in enumerate(self.common_closings[:8], 1):
+            for i, closing in enumerate(self.common_closings[:12], 1):  # Increased from 8
                 patterns_text += f"  {i}. {closing}\n"
             patterns_text += "\n"
         
         if hasattr(self, 'common_phrases') and self.common_phrases:
             patterns_text += "TERMOS E EXPRESSÕES CHAVE (USE-OS):\n"
-            phrases_list = ", ".join(self.common_phrases[:30])
+            phrases_list = ", ".join(self.common_phrases[:40])  # Increased from 30
             patterns_text += f"  {phrases_list}\n\n"
         
         prompt = f"""{examples_text}
@@ -1015,6 +1152,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
         if articles:
             self.save_all_articles(articles, "generated_articles.json")
             self.save_to_materias_js(articles, "materias_generated.js")
+            # FIXED: Ensure cumulative files are updated
             self.save_cumulative_articles(articles, "all_articles.json", "all_materias.js")
 
         return articles
@@ -1033,7 +1171,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             file_path = os.path.join(self.script_dir, filename)
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write('// Generated articles by Groq AI\n')
-                f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-d %H:%M:%S")}\n')
+                f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
                 f.write(f'// Total generated articles: {len(articles)}\n')
                 f.write(f'// Model used: {self.model_name}\n')
                 
@@ -1109,13 +1247,13 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
                     '_data': article.get('_data', datetime.now().strftime("%d/%m/%Y")),
                     '_hora': '00:00',
                     '_autor': article.get('_autor', 'Sérgio Fraiman'),
-                    '_imgsrc': 'None',
-                    '_imgwth': 'None',
-                    '_imghgt': 'None',
-                    '_videosrc': 'None',
-                    '_videowth': 'None',
-                    '_videohgt': 'None',
-                    '_year': 2024
+                    '_imgsrc': article.get('_imgsrc', 'None'),
+                    '_imgwth': article.get('_imgwth', 'None'),
+                    '_imghgt': article.get('_imghgt', 'None'),
+                    '_videosrc': article.get('_videosrc', 'None'),
+                    '_videowth': article.get('_videowth', 'None'),
+                    '_videohgt': article.get('_videohgt', 'None'),
+                    '_year': article.get('_year', 2024)
                 }
                 merged.append(full_article)
             
@@ -1140,6 +1278,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             return None
 
     def save_cumulative_articles(self, articles, json_file="all_articles.json", js_file="all_materias.js"):
+        """Save articles to cumulative files - FIXED to ensure proper updating"""
         try:
             print(f"\nSaving {len(articles)} articles to cumulative files...")
             
@@ -1171,20 +1310,29 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
                 
                 articles_to_save.append(article_copy)
             
+            # Create dictionary for deduplication
             all_articles_dict = {}
             
+            # First add existing articles
             for article in existing_articles:
                 article_id = article.get('_id')
                 if article_id:
                     all_articles_dict[article_id] = article
             
+            # Then add new articles (new articles will overwrite old ones with same ID)
             for article in articles_to_save:
                 article_id = article.get('_id')
                 if article_id:
                     all_articles_dict[article_id] = article
+                else:
+                    # If no ID, generate one
+                    new_id = random.randint(100000, 999999)
+                    article['_id'] = new_id
+                    all_articles_dict[new_id] = article
             
             merged_articles = list(all_articles_dict.values())
             
+            # Sort by date (newest first)
             merged_articles.sort(
                 key=lambda x: (
                     datetime.strptime(x.get('_data', '01/01/2000'), '%d/%m/%Y') 
@@ -1194,23 +1342,30 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
                 reverse=True
             )
             
+            # Save JSON file
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(merged_articles, f, indent=2, ensure_ascii=False)
             print(f"   Saved {len(merged_articles)} total articles to {json_path}")
             
+            # Save JS file
             self.save_cumulative_js_format(merged_articles, js_path)
             
             return True
             
         except Exception as e:
             print(f"   Error saving cumulative articles: {e}")
+            import traceback
+            traceback.print_exc()
             return False
 
     def save_cumulative_js_format(self, articles, js_file):
+        """Save articles in JS format - FIXED to ensure proper updating"""
         try:
-            with open(js_file, 'w', encoding='utf-8') as f:
-                f.write('// Cumulative articles database\n')
-                f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
+            js_path = os.path.join(self.script_dir, js_file)
+            
+            with open(js_path, 'w', encoding='utf-8') as f:
+                f.write('// Cumulative articles database - Vermelho de Paixão\n')
+                f.write(f'// Last updated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
                 f.write(f'// Total articles: {len(articles)}\n')
                 f.write(f'// Auto-updated by article_generator.py\n')
                 f.write('\n')
@@ -1242,10 +1397,12 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
                 
                 f.write('];\n')
             
-            print(f"   Saved JS format to {js_file}")
+            print(f"   Saved JS format to {js_file} with {len(articles)} articles")
             
         except Exception as e:
             print(f"   Error saving JS format: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 # Initialize Flask app
@@ -1268,7 +1425,7 @@ def root():
             'models': '/api/models - List available models',
             'debug': '/api/debug - Debug environment (GET)'
         },
-        'note': 'Generator uses lazy initialization',
+        'note': 'Generator uses lazy initialization with batch processing',
         'deployment': 'Render.com',
         'python_version': sys.version.split()[0]
     })
@@ -1354,6 +1511,7 @@ def generate_api():
             
             images_generated = sum(1 for a in articles_data if a['_imgsrc'] != 'None')
             print(f"[API] {len(articles)} articles generated successfully!")
+            print(f"[API] Cumulative files (all_articles.json and all_materias.js) have been updated.")
             
             return jsonify({
                 'success': True, 
@@ -1362,7 +1520,9 @@ def generate_api():
                 'available_models': generator.available_models,
                 'rate_limited_models': list(generator.rate_limited_models),
                 'slow_models': list(generator.slow_models),
-                'images_generated': images_generated
+                'images_generated': images_generated,
+                'cumulative_files_updated': True,
+                'cumulative_articles_count': len(generator.existing_articles) + len(articles)
             })
         else:
             return jsonify({
@@ -1398,6 +1558,7 @@ def health_check():
             'client_available': True,
             'flask_running': True,
             'generator_ready': True,
+            'article_batches_available': len(getattr(generator, 'article_batches', [])),
             'deployment': 'Render.com',
             'python_version': sys.version.split()[0]
         })
@@ -1464,14 +1625,18 @@ def debug_api():
             'client_available': generator_instance.client is not None,
             'available_models_count': len(generator_instance.available_models),
             'current_model': generator_instance.model_name,
-            'groq_client_initialized': True
+            'groq_client_initialized': True,
+            'article_batches_count': len(getattr(generator_instance, 'article_batches', [])),
+            'total_articles_loaded': len(getattr(generator_instance, 'existing_articles', [])),
+            'good_articles_count': len(getattr(generator_instance, 'good_articles', []))
         })
     else:
         debug_info.update({
             'client_available': False,
             'available_models_count': 0,
             'current_model': None,
-            'groq_client_initialized': False
+            'groq_client_initialized': False,
+            'article_batches_count': 0
         })
     
     return jsonify(debug_info)
@@ -1494,7 +1659,7 @@ print(f"✓ Registered routes:")
 for rule in app.url_map.iter_rules():
     methods = ', '.join(sorted(rule.methods - {'HEAD', 'OPTIONS'}))
     print(f"  {rule.rule:40s} [{methods}]")
-print("✓ App ready to serve requests (Generator uses lazy initialization)")
+print("✓ App ready to serve requests (Generator uses lazy initialization with batch processing)")
 print("=" * 70)
 
 if __name__ == "__main__":
