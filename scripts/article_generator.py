@@ -19,23 +19,44 @@ PORT = 10000  # Render default port
 
 class ArticleGenerator:
     def __init__(self, api_key="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"):
-        now = datetime.now()
-        self.article_mindate = now.strftime("%d, %m, %Y")
-        self.api_key = api_key
+        # ═══════════════════════════════════════════════════════
+        # SEMPRE INICIALIZAR ATRIBUTOS CRÍTICOS PRIMEIRO
+        # ═══════════════════════════════════════════════════════
+        self.available_models = []
         self.rate_limited_models = set()
         self.slow_models = set()
         self.last_rate_limit_check = {}
         self.current_model_index = 0
+        self.client = None
+        self.model_name = None
         
+        # Atributos de artigos (fallback para listas vazias)
+        self.existing_articles = []
+        self.good_articles = []
+        self.authors = []
+        self.all_titles = []
+        self.all_contents = []
+        self.common_title_patterns = []
+        self.common_openings = []
+        self.common_closings = []
+        self.common_phrases = []
+        self.mentioned_names = []
+        self.date_references = []
+        
+        now = datetime.now()
+        self.article_mindate = now.strftime("%d, %m, %Y")
+        self.api_key = api_key
         self.freepik_api_key = "FPSX2a0b7c19ee152bde00b37a38038b394d"
         
         # Get script directory for file operations
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         
+        # ═══════════════════════════════════════════════════════
+        # AGORA TENTAR INICIALIZAÇÃO (PODE FALHAR, MAS ATRIBUTOS EXISTEM)
+        # ═══════════════════════════════════════════════════════
         if not self.api_key:
             print("Warning: No API key provided.")
             print("Get one from: https://console.groq.com/keys")
-            self.client = None
             return
         
         try:
@@ -43,16 +64,15 @@ class ArticleGenerator:
             print("Groq client initialized")
         except Exception as e:
             print(f"Warning: Error initializing Groq client: {e}")
-            self.client = None
             return
         
         self.available_models = self.get_all_available_models()
         if not self.available_models:
             print("Warning: No models available.")
-            return
-        
-        print(f"Available models: {', '.join(self.available_models)}")
-        self.select_best_model()
+            # NÃO RETORNAR! Deixar continuar com lista vazia
+        else:
+            print(f"Available models: {', '.join(self.available_models)}")
+            self.select_best_model()
         
         # Load existing articles - non-critical operation
         try:
@@ -60,18 +80,6 @@ class ArticleGenerator:
             self.analyze_article_patterns()
         except Exception as e:
             print(f"Warning: Could not load existing articles: {e}")
-            # Initialize with empty data instead of crashing
-            self.existing_articles = []
-            self.good_articles = []
-            self.authors = []
-            self.all_titles = []
-            self.all_contents = []
-            self.common_title_patterns = []
-            self.common_openings = []
-            self.common_closings = []
-            self.common_phrases = []
-            self.mentioned_names = []
-            self.date_references = []
     
     def get_all_available_models(self):
         if not self.client:
@@ -1080,7 +1088,7 @@ def get_generator():
             try:
                 print("Initializing ArticleGenerator...")
                 generator_instance = ArticleGenerator(
-                    api_key="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"
+                    api_key="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"
                 )
                 
                 if generator_instance.client and generator_instance.available_models:
@@ -1100,11 +1108,18 @@ def get_generator():
 def generate_api():
     generator = get_generator()
     
-    if not generator or not generator.client:
+    if not generator:
         return jsonify({
             'success': False, 
-            'error': 'Article generator not available or failed to initialize',
-            'available_models': generator.available_models if generator else []
+            'error': 'Article generator not available',
+            'available_models': []
+        }), 503
+    
+    if not generator.client:
+        return jsonify({
+            'success': False, 
+            'error': 'Groq client not initialized',
+            'available_models': getattr(generator, 'available_models', [])
         }), 503
     
     data = request.json
@@ -1157,7 +1172,7 @@ def generate_api():
             return jsonify({
                 'success': False, 
                 'error': 'Failed to generate articles',
-                'available_models': generator.available_models
+                'available_models': getattr(generator, 'available_models', [])
             }), 500
     except Exception as e:
         print(f"[API] Error: {e}")
@@ -1166,7 +1181,7 @@ def generate_api():
         return jsonify({
             'success': False, 
             'error': str(e),
-            'available_models': generator.available_models if generator else []
+            'available_models': getattr(generator, 'available_models', [])
         }), 500
 
 @app.route('/api/health', methods=['GET'])
