@@ -27,9 +27,6 @@ class ArticleGenerator:
         self.last_rate_limit_check = {}
         self.current_model_index = 0
         
-        # INITIALIZE available_models AS EMPTY LIST - CRITICAL FIX
-        self.available_models = []
-        
         self.freepik_api_key = "FPSX2a0b7c19ee152bde00b37a38038b394d"
         
         # Get script directory for file operations
@@ -1055,39 +1052,6 @@ CORS(app)
 generator_instance = None
 generator_lock = threading.Lock()
 
-# Improved lazy initialization function with thread safety
-def get_generator():
-    """Initialize the ArticleGenerator only when needed"""
-    global generator_instance, generator_lock
-    
-    with generator_lock:
-        if generator_instance is None:
-            try:
-                print("Initializing ArticleGenerator...")
-                generator_instance = ArticleGenerator(
-                    api_key="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"
-                )
-                
-                # ROBUST CHECKING
-                if (generator_instance.client and 
-                    hasattr(generator_instance, 'available_models') and 
-                    generator_instance.available_models):
-                    print(f"Generator initialized successfully with model: {generator_instance.model_name}")
-                    print(f"Available models: {len(generator_instance.available_models)}")
-                else:
-                    print("Warning: Generator partially initialized")
-                    # Ensure available_models exists even if empty
-                    if not hasattr(generator_instance, 'available_models'):
-                        generator_instance.available_models = []
-                    
-            except Exception as e:
-                print(f"Error initializing generator: {e}")
-                import traceback
-                traceback.print_exc()
-                generator_instance = None
-    
-    return generator_instance
-
 # Root endpoint for Render.com health checks
 @app.route('/', methods=['GET'])
 def root():
@@ -1106,26 +1070,41 @@ def root():
         'python_version': sys.version.split()[0]
     })
 
+# Lazy initialization function with thread safety
+def get_generator():
+    """Initialize the ArticleGenerator only when needed"""
+    global generator_instance, generator_lock
+    
+    with generator_lock:
+        if generator_instance is None:
+            try:
+                print("Initializing ArticleGenerator...")
+                generator_instance = ArticleGenerator(
+                    api_key="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"
+                )
+                
+                if generator_instance.client and generator_instance.available_models:
+                    print(f"Generator initialized successfully with model: {generator_instance.model_name}")
+                else:
+                    print("Warning: Generator partially initialized")
+                    
+            except Exception as e:
+                print(f"Error initializing generator: {e}")
+                import traceback
+                traceback.print_exc()
+                generator_instance = None
+    
+    return generator_instance
+
 @app.route('/api/generate', methods=['POST'])
 def generate_api():
     generator = get_generator()
     
-    if not generator:
+    if not generator or not generator.client:
         return jsonify({
             'success': False, 
-            'error': 'Article generator failed to initialize',
-            'available_models': []
-        }), 503
-    
-    # ADDITIONAL CHECK - ensure available_models attribute exists
-    if not hasattr(generator, 'available_models'):
-        generator.available_models = []
-    
-    if not generator.client:
-        return jsonify({
-            'success': False, 
-            'error': 'Groq client not available',
-            'available_models': generator.available_models
+            'error': 'Article generator not available or failed to initialize',
+            'available_models': generator.available_models if generator else []
         }), 503
     
     data = request.json
@@ -1192,26 +1171,30 @@ def generate_api():
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
+    """Health check endpoint - responds immediately without initialization"""
     generator = generator_instance
     
-    health_info = {
-        'success': True, 
-        'status': 'API is running',
-        'flask_running': True,
-        'deployment': 'Render.com',
-        'python_version': sys.version.split()[0]
-    }
-    
-    if generator:
-        health_info['generator_ready'] = True
-        health_info['current_model'] = getattr(generator, 'model_name', 'N/A')
-        health_info['available_models_count'] = len(getattr(generator, 'available_models', []))
+    if generator and generator.client and generator.available_models:
+        return jsonify({
+            'success': True, 
+            'status': 'API is fully operational', 
+            'current_model': generator.model_name,
+            'available_models_count': len(generator.available_models),
+            'flask_running': True,
+            'generator_ready': True,
+            'deployment': 'Render.com',
+            'python_version': sys.version.split()[0]
+        })
     else:
-        health_info['generator_ready'] = False
-        health_info['message'] = 'Generator will initialize on first /api/generate request'
-    
-    return jsonify(health_info), 200
+        return jsonify({
+            'success': True, 
+            'status': 'API is running',
+            'flask_running': True,
+            'generator_ready': False,
+            'message': 'Generator will initialize on first /api/generate request',
+            'deployment': 'Render.com',
+            'python_version': sys.version.split()[0]
+        }), 200
 
 @app.route('/api/models', methods=['GET'])
 def list_models():
