@@ -924,7 +924,7 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             file_path = os.path.join(self.script_dir, filename)
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write('// Generated articles by Groq AI\n')
-                f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
+                f.write(f'// Generated on: {datetime.now().strftime("%Y-%m-d %H:%M:%S")}\n')
                 f.write(f'// Total generated articles: {len(articles)}\n')
                 f.write(f'// Model used: {self.model_name}\n')
                 
@@ -1111,22 +1111,27 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
 # Initialize Flask app
 app = Flask(__name__)
 
-# CRITICAL FIX: Proper CORS configuration
-CORS(app, resources={
-    r"/api/*": {
-        "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
-})
+# SIMPLIFIED CORS CONFIGURATION - This works better
+CORS(app)
 
-# Additional CORS headers for all responses
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    return response
+# Root endpoint for Render.com health checks
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint - responds immediately without any initialization"""
+    return jsonify({
+        'service': 'Vermelho de Paixão - Article Generator API',
+        'status': 'running',
+        'version': '2.0',
+        'endpoints': {
+            'health': '/api/health - Check service health',
+            'generate': '/api/generate - Generate articles (POST)',
+            'models': '/api/models - List available models',
+            'debug': '/api/debug - Debug environment (GET)'
+        },
+        'note': 'Generator uses lazy initialization',
+        'deployment': 'Render.com',
+        'python_version': sys.version.split()[0]
+    })
 
 # LAZY INITIALIZATION - Generator will be created only when needed
 generator_instance = None
@@ -1157,31 +1162,9 @@ def get_generator():
     
     return generator_instance
 
-# Root endpoint for Render.com health checks
-@app.route('/', methods=['GET'])
-def root():
-    """Root endpoint - responds immediately without any initialization"""
-    return jsonify({
-        'service': 'Vermelho de Paixão - Article Generator API',
-        'status': 'running',
-        'version': '2.0',
-        'endpoints': {
-            'health': '/api/health - Check service health',
-            'generate': '/api/generate - Generate articles (POST)',
-            'models': '/api/models - List available models',
-            'debug': '/api/debug - Debug environment (GET)'
-        },
-        'note': 'Generator uses lazy initialization',
-        'deployment': 'Render.com',
-        'python_version': sys.version.split()[0]
-    })
-
-@app.route('/api/generate', methods=['POST', 'OPTIONS'])
+# SIMPLIFIED GENERATE ENDPOINT - No OPTIONS handling, Flask-CORS handles it
+@app.route('/api/generate', methods=['POST'])
 def generate_api():
-    # Handle preflight
-    if request.method == 'OPTIONS':
-        return '', 200
-    
     generator = get_generator()
     
     if not generator:
