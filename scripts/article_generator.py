@@ -857,11 +857,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             print(f"   SUCCESS with Freepik!")
             return freepik_result
         
-        placeholder_result = self.create_placeholder(titulo)
-        if placeholder_result:
-            print(f"   Created placeholder image")
-            return placeholder_result
-        
         print("   Image generation failed - saving article without image")
         return None
     
@@ -908,46 +903,6 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             print(f"   Freepik API call failed: {str(e)}")
             
         return None
-
-    def create_placeholder(self, titulo):
-        try:
-            # Try to import PIL, but don't crash if it fails
-            try:
-                from PIL import Image, ImageDraw, ImageFont
-                pillow_available = True
-            except ImportError:
-                pillow_available = False
-                print("   Pillow not available for placeholder generation")
-                return None
-            
-            import io
-            
-            img = Image.new('RGB', (800, 600), color=(139, 0, 0))
-            
-            draw = ImageDraw.Draw(img)
-            
-            try:
-                font = ImageFont.truetype("arial.ttf", 36)
-            except:
-                font = ImageFont.load_default()
-            
-            draw.text((50, 200), "América FC", fill=(255, 255, 255), font=font)
-            draw.text((50, 250), titulo[:50], fill=(255, 255, 255), font=font)
-            draw.text((50, 300), "Imagem em breve...", fill=(200, 200, 200), font=font)
-            
-            buffered = io.BytesIO()
-            img.save(buffered, format="PNG")
-            img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
-            
-            return {
-                '_imgsrc': f"data:image/png;base64,{img_str}",
-                '_imgwth': '800',
-                '_imghgt': '600'
-            }
-            
-        except Exception as e:
-            print(f"   Placeholder error: {e}")
-            return None
     
     def generate_multiple_articles(self, count=5, topic=None):
         # Ensure client is initialized
