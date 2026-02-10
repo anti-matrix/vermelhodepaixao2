@@ -51,7 +51,7 @@ if (vp_width > 768) {
 
 // ==================== ARTICLE FUNCTIONS ====================
 
-// Helper function to add image if available
+// Helper function to add \\ if available
 function addImageIfAvailable(artigo, container) {
     if (artigo.imgsrc && artigo.imgsrc !== 'None') {
         try {
