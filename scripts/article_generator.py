@@ -52,60 +52,102 @@ class ArticleGenerator:
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         
         # ═══════════════════════════════════════════════════════
-        # INITIALIZE GROQ CLIENT WITH PROXY HANDLING FOR RENDER
+        # INITIALIZE GROQ CLIENT WITH FIXED SCOPE FOR RENDER
         # ═══════════════════════════════════════════════════════
         if not self.api_key:
             print("Warning: No API key provided.")
             print("Get one from: https://console.groq.com/keys")
             return
         
+        print(f"Initializing Groq client with API key: {self.api_key[:10]}...")
+        
         try:
-            # FIRST ATTEMPT: Try normal initialization
+            # ATTEMPT 1: Direct initialization (works locally)
+            print("Attempt 1: Direct initialization...")
             self.client = Groq(api_key=self.api_key)
-            print("Groq client initialized successfully")
+            print("✓ Groq client initialized (direct method)")
         except Exception as e:
-            print(f"Warning: Error initializing Groq client: {e}")
-            print("Trying alternative initialization method...")
+            print(f"✗ Attempt 1 failed: {e}")
             
-            # SECOND ATTEMPT: Try with explicit no-proxy settings for Render
+            # ATTEMPT 2: Try with a custom httpx client to avoid proxy issues
             try:
-                # Initialize with minimal parameters to avoid proxy issues
-                self.client = Groq(
-                    api_key=self.api_key,
-                    # Explicitly set to None to avoid proxy conflicts
-                    http_client=None
+                print("Attempt 2: With custom httpx client...")
+                import httpx
+                # Create a simple httpx client without proxy settings
+                http_client = httpx.Client(
+                    timeout=30.0,
+                    limits=httpx.Limits(max_keepalive_connections=5, max_connections=10)
                 )
-                print("Groq client initialized (alternative method)")
+                self.client = Groq(api_key=self.api_key, http_client=http_client)
+                print("✓ Groq client initialized (with custom httpx client)")
             except Exception as e2:
-                print(f"Warning: Alternative initialization also failed: {e2}")
-                print("Trying third initialization method...")
+                print(f"✗ Attempt 2 failed: {e2}")
                 
-                # THIRD ATTEMPT: Try with a simple direct initialization
+                # ATTEMPT 3: Try with minimal parameters and no proxy detection
                 try:
-                    # Some versions of Groq library have issues with proxy detection
-                    # Try to create the client without any additional parameters
-                    from groq import Groq
-                    self.client = Groq(api_key=self.api_key)
-                    print("Groq client initialized (third method)")
+                    print("Attempt 3: Minimal initialization...")
+                    # Import Groq again to ensure it's in scope
+                    from groq import Groq as GroqClient
+                    # Initialize with only api_key to avoid any proxy/parameter issues
+                    self.client = GroqClient(api_key=self.api_key)
+                    print("✓ Groq client initialized (minimal method)")
                 except Exception as e3:
-                    print(f"Fatal: Could not initialize Groq client: {e3}")
-                    print("The API will continue but article generation will not work.")
-                    print("Check Render environment variables and Groq library version.")
-                    print("Current Groq library version:", self._get_groq_version())
-                    self.client = None
-                    # DO NOT RETURN - let it continue so API can still respond
+                    print(f"✗ Attempt 3 failed: {e3}")
+                    
+                    # ATTEMPT 4: Last resort - monkey patch the Groq client if needed
+                    try:
+                        print("Attempt 4: Last resort initialization...")
+                        # Try to bypass any proxy/env issues completely
+                        import groq
+                        # Access the Groq class directly from module
+                        GroqClass = groq.Groq
+                        
+                        # Try to create instance with minimal kwargs
+                        kwargs = {'api_key': self.api_key}
+                        
+                        # Check what parameters Groq.__init__ accepts
+                        import inspect
+                        init_params = inspect.signature(GroqClass.__init__).parameters
+                        
+                        # Only pass parameters that Groq.__init__ accepts
+                        valid_kwargs = {}
+                        for key, value in kwargs.items():
+                            if key in init_params:
+                                valid_kwargs[key] = value
+                        
+                        self.client = GroqClass(**valid_kwargs)
+                        print("✓ Groq client initialized (last resort method)")
+                    except Exception as e4:
+                        print(f"✗ All initialization attempts failed: {e4}")
+                        print("Fatal: Could not initialize Groq client.")
+                        print("Please check:")
+                        print("1. Groq library version on Render (should match local)")
+                        print("2. API key validity")
+                        print("3. Render network restrictions")
+                        self.client = None
         
         # Load models if client is available
         if self.client:
-            self.available_models = self.get_all_available_models()
-            if not self.available_models:
-                print("Warning: No models available.")
-                # Still continue with empty list
-            else:
-                print(f"Available models: {', '.join(self.available_models)}")
+            try:
+                self.available_models = self.get_all_available_models()
+                if not self.available_models:
+                    print("Warning: No models available.")
+                else:
+                    print(f"Available models: {', '.join(self.available_models[:3])}... ({len(self.available_models)} total)")
+                    self.select_best_model()
+            except Exception as e:
+                print(f"Warning: Could not load models: {e}")
+                # Set fallback models
+                self.available_models = [
+                    'llama-3.3-70b-versatile',
+                    'llama-3.1-70b-versatile', 
+                    'llama-3.1-8b-instant',
+                    'mixtral-8x7b-32768',
+                    'gemma2-9b-it'
+                ]
                 self.select_best_model()
         else:
-            print("Warning: No Groq client available. Model selection skipped.")
+            print("Warning: No Groq client available. Using fallback models.")
             self.available_models = [
                 'llama-3.3-70b-versatile',
                 'llama-3.1-70b-versatile', 
@@ -121,14 +163,6 @@ class ArticleGenerator:
             self.analyze_article_patterns()
         except Exception as e:
             print(f"Warning: Could not load existing articles: {e}")
-    
-    def _get_groq_version(self):
-        """Get the version of the Groq library"""
-        try:
-            import groq
-            return getattr(groq, '__version__', 'Unknown')
-        except:
-            return "Unknown"
     
     def get_all_available_models(self):
         if not self.client:
@@ -210,7 +244,13 @@ class ArticleGenerator:
     
     def load_existing_articles(self, json_file='posts_complete.json'):
         try:
-            json_path = os.path.join(self.script_dir, json_file)
+            # First check in scripts directory (for Render deployment)
+            json_path = os.path.join(self.script_dir, 'scripts', json_file)
+            
+            # If not found, check in current directory
+            if not os.path.exists(json_path):
+                json_path = os.path.join(self.script_dir, json_file)
+            
             print(f"Looking for {json_file} at: {json_path}")
             
             if not os.path.exists(json_path):
@@ -409,6 +449,7 @@ class ArticleGenerator:
     def generate_article(self, topic=None, max_length=500, max_retries=5):
         if not self.client:
             print("ERROR: Groq client not available. Cannot generate article.")
+            print(f"Available models: {self.available_models}")
             return None
         
         author = random.choice(self.authors) if self.authors else "Sérgio Fraiman"
@@ -1144,14 +1185,14 @@ def get_generator():
                 )
                 
                 if generator_instance and generator_instance.client and generator_instance.available_models:
-                    print(f"Generator initialized successfully with model: {generator_instance.model_name}")
+                    print(f"✓ Generator initialized successfully with model: {generator_instance.model_name}")
                 else:
-                    print("Warning: Generator partially initialized")
-                    print(f"Client available: {generator_instance.client is not None}")
-                    print(f"Models available: {len(generator_instance.available_models)}")
+                    print("⚠ Warning: Generator partially initialized")
+                    print(f"   Client available: {generator_instance.client is not None if generator_instance else False}")
+                    print(f"   Models available: {len(generator_instance.available_models) if generator_instance else 0}")
                     
             except Exception as e:
-                print(f"Error initializing generator: {e}")
+                print(f"✗ Error initializing generator: {e}")
                 import traceback
                 traceback.print_exc()
                 generator_instance = None
@@ -1172,9 +1213,9 @@ def generate_api():
     if not generator.client:
         return jsonify({
             'success': False, 
-            'error': 'Groq client not initialized - Check Render logs for proxy issues',
+            'error': 'Groq client not initialized - Check Render logs for initialization errors',
             'available_models': getattr(generator, 'available_models', []),
-            'note': 'Render environment may have proxy settings that conflict with Groq library'
+            'note': 'All initialization attempts failed. Check Groq library version on Render.'
         }), 503
     
     data = request.json
