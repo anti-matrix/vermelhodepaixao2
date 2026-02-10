@@ -14,16 +14,14 @@ import base64
 import urllib.parse
 import os
 
-# RENDER.COM DEPLOYMENT: Hard-coded port for Render (10000 default)
+# RENDER.COM DEPLOYMENT: Hard-coded port for Render
 PORT = 10000  # Render default port
-
-now = datetime.now()
-article_mindate = now.strftime("%d, %m, %Y")
 
 class ArticleGenerator:
     def __init__(self, api_key="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"):
+        now = datetime.now()
+        self.article_mindate = now.strftime("%d, %m, %Y")
         self.api_key = api_key
-        self.article_mindate = article_mindate
         self.rate_limited_models = set()
         self.slow_models = set()
         self.last_rate_limit_check = {}
@@ -1054,7 +1052,7 @@ CORS(app)
 generator_instance = None
 generator_lock = threading.Lock()
 
-# Root endpoint for Render.com health checks - RESPONDS INSTANTLY
+# Root endpoint for Render.com health checks
 @app.route('/', methods=['GET'])
 def root():
     """Root endpoint - responds immediately without any initialization"""
@@ -1068,7 +1066,8 @@ def root():
             'models': '/api/models - List available models'
         },
         'note': 'Generator initializes lazily on first /api/generate request',
-        'deployment': 'Render.com'
+        'deployment': 'Render.com',
+        'python_version': sys.version.split()[0]
     })
 
 # Lazy initialization function with thread safety
@@ -1086,11 +1085,8 @@ def get_generator():
                 
                 if generator_instance.client and generator_instance.available_models:
                     print(f"Generator initialized successfully with model: {generator_instance.model_name}")
-                    print(f"Freepik API key: {generator_instance.freepik_api_key[:10]}...")
-                    print(f"Image model: Flux Kontext Pro")
                 else:
                     print("Warning: Generator partially initialized")
-                    # The app will still work, just some features limited
                     
             except Exception as e:
                 print(f"Error initializing generator: {e}")
@@ -1109,7 +1105,7 @@ def generate_api():
             'success': False, 
             'error': 'Article generator not available or failed to initialize',
             'available_models': generator.available_models if generator else []
-        }), 503  # Service Unavailable
+        }), 503
     
     data = request.json
     if not data:
@@ -1133,10 +1129,6 @@ def generate_api():
         if articles:
             articles_data = []
             for article in articles:
-                imgsrc_value = article.get('_imgsrc', 'None')
-                imgsrc_preview = imgsrc_value[:80] if imgsrc_value != 'None' else 'None'
-                print(f"[API] Article '{article.get('_titulo', '')[:50]}...' | _imgsrc: {imgsrc_preview}...")
-                
                 articles_data.append({
                     '_id': article.get('_id'),
                     '_titulo': article.get('_titulo'),
@@ -1144,7 +1136,7 @@ def generate_api():
                     '_data': article.get('_data'),
                     '_hora': article.get('_hora'),
                     '_autor': article.get('_autor'),
-                    '_imgsrc': imgsrc_value,
+                    '_imgsrc': article.get('_imgsrc', 'None'),
                     '_imgwth': article.get('_imgwth'),
                     '_imghgt': article.get('_imghgt'),
                     '_videosrc': article.get('_videosrc'),
@@ -1154,7 +1146,6 @@ def generate_api():
             
             images_generated = sum(1 for a in articles_data if a['_imgsrc'] != 'None')
             print(f"[API] {len(articles)} articles generated successfully!")
-            print(f"[API] Images generated: {images_generated}/{len(articles)}")
             
             return jsonify({
                 'success': True, 
@@ -1181,29 +1172,28 @@ def generate_api():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint - responds immediately without initialization"""
-    # Check if generator is already initialized (don't initialize it now)
-    generator = generator_instance  # Direct access without calling get_generator()
+    generator = generator_instance
     
     if generator and generator.client and generator.available_models:
         return jsonify({
             'success': True, 
             'status': 'API is fully operational', 
             'current_model': generator.model_name,
-            'available_models': generator.available_models,
-            'image_generation': 'Enabled with Freepik API (Flux Kontext Pro)',
+            'available_models_count': len(generator.available_models),
             'flask_running': True,
             'generator_ready': True,
-            'deployment': 'Render.com'
+            'deployment': 'Render.com',
+            'python_version': sys.version.split()[0]
         })
     else:
-        # Return 200 even if generator not initialized - Flask is running
         return jsonify({
             'success': True, 
             'status': 'API is running',
             'flask_running': True,
             'generator_ready': False,
             'message': 'Generator will initialize on first /api/generate request',
-            'deployment': 'Render.com'
+            'deployment': 'Render.com',
+            'python_version': sys.version.split()[0]
         }), 200
 
 @app.route('/api/models', methods=['GET'])
@@ -1223,74 +1213,27 @@ def list_models():
             'available_models': []
         }), 503
 
-def run_web_server():
-    print("=" * 70)
-    print("VERMELHO DE PAIXÃO - WEB API SERVER")
-    print("AI Article Generator with Freepik Image Generation")
-    print("Deployment: Render.com")
-    print("=" * 70)
-    
-    print(f"\nFlask server starting on port {PORT}...")
-    print(f"ArticleGenerator will initialize on first API request")
-    
-    print("\n" + "=" * 70)
-    print("API ENDPOINTS:")
-    print("-" * 70)
-    print(f"• GET  http://0.0.0.0:{PORT}/api/health    - Check status")
-    print(f"• GET  http://0.0.0.0:{PORT}/api/models    - List models")
-    print(f"• POST http://0.0.0.0:{PORT}/api/generate - Generate articles WITH images")
-    print("\nExample POST request:")
-    print('''{
-  "query": "América FC no campeonato brasileiro",
-  "count": 3
-}''')
-    print("=" * 70)
-    print(f"\nServer starting at: http://0.0.0.0:{PORT}")
-    print(f"Press Ctrl+C to stop")
-    print("=" * 70)
-    
-    # For Render.com deployment
-    app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False, threaded=True)
+# Error handlers
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'success': False, 'error': 'Endpoint not found'}), 404
 
-# Startup confirmation for Render.com deployment
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+# Startup message
 print("=" * 70)
 print("✓ Flask app module loaded successfully")
 print(f"✓ PORT configured: {PORT} (Render.com)")
+print(f"✓ Python version: {sys.version.split()[0]}")
 print(f"✓ Registered routes:")
 for rule in app.url_map.iter_rules():
     methods = ', '.join(sorted(rule.methods - {'HEAD', 'OPTIONS'}))
     print(f"  {rule.rule:40s} [{methods}]")
 print("✓ App ready to serve requests (Generator initializes lazily)")
-print("✓ Deployment: Render.com")
 print("=" * 70)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == '--web':
-        run_web_server()
-    else:
-        print("=" * 70)
-        print("VERMELHO DE PAIXÃO - ARTICLE GENERATOR")
-        print("Image Generation with Freepik API (Flux Kontext Pro)")
-        print("Deployment: Render.com")
-        print("=" * 70)
-        
-        generator = ArticleGenerator(
-            api_key="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"
-        )
-        
-        if generator.client and generator.available_models:
-            print(f"\nSystem ready!")
-            print(f"Current model: {generator.model_name}")
-            print(f"Freepik API key: {generator.freepik_api_key[:10]}...")
-            print(f"Image model: Flux Kontext Pro")
-            
-            print("\n" + "=" * 70)
-            print("Usage:")
-            print("  Run with '--web' to start the API server")
-            print("  Example: python article_generator.py --web")
-            print("  To generate articles with AUTO images:")
-            print("    generator.generate_multiple_articles(count=3, topic='América FC')")
-            print("=" * 70)
-        else:
-            print("\nWarning: System partially initialized")
-            print("Some features may not work correctly")
+    print(f"\nStarting server on port {PORT}...")
+    app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False, threaded=True)
