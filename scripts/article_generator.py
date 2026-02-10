@@ -50,32 +50,24 @@ class ArticleGenerator:
         
         # Get script directory for file operations
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    def initialize_groq_client(self):
+        """Lazy initialization of Groq client - called only when needed"""
+        if self.client is not None:
+            return True
         
-        # ═══════════════════════════════════════════════════════
-        # INITIALIZE GROQ CLIENT WITH FIXED SCOPE FOR RENDER
-        # ═══════════════════════════════════════════════════════
-        # ═══════════════════════════════════════════════════════
-        # INITIALIZE GROQ CLIENT - SIMPLIFIED FOR VERSION 1.0.0+
-        # ═══════════════════════════════════════════════════════
         if not self.api_key:
             print("Warning: No API key provided.")
-            return
+            return False
 
-        print(f"Initializing Groq client (v1.0.0+)...")
+        print(f"Initializing Groq client (lazy initialization)...")
 
         try:
             # Direct initialization. Groq 1.0.0 should handle Render's environment.
             self.client = Groq(api_key=self.api_key)
             print("✓ Groq client initialized successfully.")
-        except Exception as e:
-            print(f"✗ Failed to initialize Groq client: {e}")
-            print("This is likely due to an outdated or incompatible library.")
-            print(f"Installed Groq version: {self._get_groq_version()}")
-            print("Expected version: 1.0.0 or higher.")
-            self.client = None
-        
-        # Load models if client is available
-        if self.client:
+            
+            # Load models if client is available
             try:
                 self.available_models = self.get_all_available_models()
                 if not self.available_models:
@@ -94,7 +86,23 @@ class ArticleGenerator:
                     'gemma2-9b-it'
                 ]
                 self.select_best_model()
-        else:
+            
+            # Load existing articles - non-critical operation
+            try:
+                self.load_existing_articles()
+                self.analyze_article_patterns()
+            except Exception as e:
+                print(f"Warning: Could not load existing articles: {e}")
+            
+            return True
+            
+        except Exception as e:
+            print(f"✗ Failed to initialize Groq client: {e}")
+            print(f"Installed Groq version: {self._get_groq_version()}")
+            print("Expected version: 1.0.0 or higher.")
+            self.client = None
+            
+            # Still set fallback models even if client fails
             print("Warning: No Groq client available. Using fallback models.")
             self.available_models = [
                 'llama-3.3-70b-versatile',
@@ -104,13 +112,15 @@ class ArticleGenerator:
                 'gemma2-9b-it'
             ]
             self.select_best_model()
-        
-        # Load existing articles - non-critical operation
+            
+            return False
+    
+    def _get_groq_version(self):
         try:
-            self.load_existing_articles()
-            self.analyze_article_patterns()
-        except Exception as e:
-            print(f"Warning: Could not load existing articles: {e}")
+            import groq
+            return getattr(groq, '__version__', 'Unknown')
+        except:
+            return 'Unknown'
     
     def get_all_available_models(self):
         if not self.client:
@@ -395,10 +405,12 @@ class ArticleGenerator:
             return False
     
     def generate_article(self, topic=None, max_length=500, max_retries=5):
+        # Ensure client is initialized
         if not self.client:
-            print("ERROR: Groq client not available. Cannot generate article.")
-            print(f"Available models: {self.available_models}")
-            return None
+            print("Initializing Groq client for article generation...")
+            if not self.initialize_groq_client():
+                print("ERROR: Failed to initialize Groq client. Cannot generate article.")
+                return None
         
         author = random.choice(self.authors) if self.authors else "Sérgio Fraiman"
         
@@ -829,10 +841,13 @@ Generate ONLY the image prompt, nothing else. Make it vivid and detailed."""
             return None
     
     def generate_multiple_articles(self, count=5, topic=None):
+        # Ensure client is initialized
         if not self.client:
-            print("Error: Groq client not initialized")
-            print("Available models would be:", self.available_models)
-            return []
+            print("Initializing Groq client for article generation...")
+            if not self.initialize_groq_client():
+                print("Error: Failed to initialize Groq client")
+                print("Available models would be:", self.available_models)
+                return []
             
         articles = []
         successful = 0
@@ -1113,32 +1128,34 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     return response
 
-# EAGER INITIALIZATION - Initialize on startup instead of lazy
-print("\n" + "="*70)
-print("INITIALIZING GENERATOR ON STARTUP...")
-print("="*70)
-
+# LAZY INITIALIZATION - Generator will be created only when needed
 generator_instance = None
-try:
-    generator_instance = ArticleGenerator(
-        api_key="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"
-    )
-    
-    if generator_instance and generator_instance.client and generator_instance.available_models:
-        print(f"✓ Generator initialized successfully with model: {generator_instance.model_name}")
-    else:
-        print("⚠ Warning: Generator partially initialized")
-        if generator_instance:
-            print(f"   Client available: {generator_instance.client is not None}")
-            print(f"   Models available: {len(generator_instance.available_models)}")
-        
-except Exception as e:
-    print(f"✗ Error initializing generator: {e}")
-    import traceback
-    traceback.print_exc()
-    generator_instance = None
 
-print("="*70 + "\n")
+def get_generator():
+    """Lazy initialization of the ArticleGenerator"""
+    global generator_instance
+    
+    if generator_instance is None:
+        print("\n" + "="*70)
+        print("LAZY INITIALIZATION: Creating ArticleGenerator instance...")
+        print("="*70)
+        
+        try:
+            generator_instance = ArticleGenerator(
+                api_key="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"
+            )
+            
+            # Note: We don't initialize the Groq client here
+            # It will be initialized on first use
+            print("✓ ArticleGenerator instance created (Groq client will initialize on first use)")
+            
+        except Exception as e:
+            print(f"✗ Error creating ArticleGenerator: {e}")
+            import traceback
+            traceback.print_exc()
+            generator_instance = None
+    
+    return generator_instance
 
 # Root endpoint for Render.com health checks
 @app.route('/', methods=['GET'])
@@ -1154,7 +1171,7 @@ def root():
             'models': '/api/models - List available models',
             'debug': '/api/debug - Debug environment (GET)'
         },
-        'note': 'Generator initialized on startup',
+        'note': 'Generator uses lazy initialization',
         'deployment': 'Render.com',
         'python_version': sys.version.split()[0]
     })
@@ -1165,21 +1182,13 @@ def generate_api():
     if request.method == 'OPTIONS':
         return '', 200
     
-    generator = generator_instance
+    generator = get_generator()
     
     if not generator:
         return jsonify({
             'success': False, 
             'error': 'Article generator not available',
             'available_models': []
-        }), 503
-    
-    if not generator.client:
-        return jsonify({
-            'success': False, 
-            'error': 'Groq client not initialized - Check Render logs for initialization errors',
-            'available_models': getattr(generator, 'available_models', []),
-            'note': 'All initialization attempts failed. Check Groq library version on Render.'
         }), 503
     
     data = request.json
@@ -1194,8 +1203,6 @@ def generate_api():
     
     try:
         print(f"\n[API] Received request: {count} articles about: {query}")
-        print(f"[API] Current model: {generator.model_name}")
-        print(f"[API] Client available: {generator.client is not None}")
         
         articles = generator.generate_multiple_articles(
             count=count, 
@@ -1257,7 +1264,7 @@ def generate_api():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint - responds immediately without initialization"""
-    generator = generator_instance
+    generator = get_generator()
     
     if generator and generator.client and generator.available_models:
         return jsonify({
@@ -1364,7 +1371,7 @@ print(f"✓ Registered routes:")
 for rule in app.url_map.iter_rules():
     methods = ', '.join(sorted(rule.methods - {'HEAD', 'OPTIONS'}))
     print(f"  {rule.rule:40s} [{methods}]")
-print("✓ App ready to serve requests (Generator initializes lazily)")
+print("✓ App ready to serve requests (Generator uses lazy initialization)")
 print("=" * 70)
 
 if __name__ == "__main__":
