@@ -54,77 +54,25 @@ class ArticleGenerator:
         # ═══════════════════════════════════════════════════════
         # INITIALIZE GROQ CLIENT WITH FIXED SCOPE FOR RENDER
         # ═══════════════════════════════════════════════════════
+        # ═══════════════════════════════════════════════════════
+        # INITIALIZE GROQ CLIENT - SIMPLIFIED FOR VERSION 1.0.0+
+        # ═══════════════════════════════════════════════════════
         if not self.api_key:
             print("Warning: No API key provided.")
-            print("Get one from: https://console.groq.com/keys")
             return
-        
-        print(f"Initializing Groq client with API key: {self.api_key[:10]}...")
-        
+
+        print(f"Initializing Groq client (v1.0.0+)...")
+
         try:
-            # ATTEMPT 1: Direct initialization (works locally)
-            print("Attempt 1: Direct initialization...")
+            # Direct initialization. Groq 1.0.0 should handle Render's environment.
             self.client = Groq(api_key=self.api_key)
-            print("✓ Groq client initialized (direct method)")
+            print("✓ Groq client initialized successfully.")
         except Exception as e:
-            print(f"✗ Attempt 1 failed: {e}")
-            
-            # ATTEMPT 2: Try with a custom httpx client to avoid proxy issues
-            try:
-                print("Attempt 2: With custom httpx client...")
-                import httpx
-                # Create a simple httpx client without proxy settings
-                http_client = httpx.Client(
-                    timeout=30.0,
-                    limits=httpx.Limits(max_keepalive_connections=5, max_connections=10)
-                )
-                self.client = Groq(api_key=self.api_key, http_client=http_client)
-                print("✓ Groq client initialized (with custom httpx client)")
-            except Exception as e2:
-                print(f"✗ Attempt 2 failed: {e2}")
-                
-                # ATTEMPT 3: Try with minimal parameters and no proxy detection
-                try:
-                    print("Attempt 3: Minimal initialization...")
-                    # Import Groq again to ensure it's in scope
-                    from groq import Groq as GroqClient
-                    # Initialize with only api_key to avoid any proxy/parameter issues
-                    self.client = GroqClient(api_key=self.api_key)
-                    print("✓ Groq client initialized (minimal method)")
-                except Exception as e3:
-                    print(f"✗ Attempt 3 failed: {e3}")
-                    
-                    # ATTEMPT 4: Last resort - monkey patch the Groq client if needed
-                    try:
-                        print("Attempt 4: Last resort initialization...")
-                        # Try to bypass any proxy/env issues completely
-                        import groq
-                        # Access the Groq class directly from module
-                        GroqClass = groq.Groq
-                        
-                        # Try to create instance with minimal kwargs
-                        kwargs = {'api_key': self.api_key}
-                        
-                        # Check what parameters Groq.__init__ accepts
-                        import inspect
-                        init_params = inspect.signature(GroqClass.__init__).parameters
-                        
-                        # Only pass parameters that Groq.__init__ accepts
-                        valid_kwargs = {}
-                        for key, value in kwargs.items():
-                            if key in init_params:
-                                valid_kwargs[key] = value
-                        
-                        self.client = GroqClass(**valid_kwargs)
-                        print("✓ Groq client initialized (last resort method)")
-                    except Exception as e4:
-                        print(f"✗ All initialization attempts failed: {e4}")
-                        print("Fatal: Could not initialize Groq client.")
-                        print("Please check:")
-                        print("1. Groq library version on Render (should match local)")
-                        print("2. API key validity")
-                        print("3. Render network restrictions")
-                        self.client = None
+            print(f"✗ Failed to initialize Groq client: {e}")
+            print("This is likely due to an outdated or incompatible library.")
+            print(f"Installed Groq version: {self._get_groq_version()}")
+            print("Expected version: 1.0.0 or higher.")
+            self.client = None
         
         # Load models if client is available
         if self.client:
