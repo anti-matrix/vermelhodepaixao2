@@ -18,7 +18,7 @@ import os
 PORT = 10000  # Render default port
 
 class ArticleGenerator:
-    def __init__(self, api_key="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"):
+    def __init__(self, api_key="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"):
         now = datetime.now()
         self.article_mindate = now.strftime("%d, %m, %Y")
         self.api_key = api_key
