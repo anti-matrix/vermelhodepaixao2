@@ -593,8 +593,8 @@ class ArticleGenerator:
                 elapsed_time = time.time() - start_time
                 print(f"   Response time: {elapsed_time:.2f}s")
                 
-                if elapsed_time > 60:
-                    print(f"   Model {self.model_name} too slow ({elapsed_time:.2f}s > 60s)")
+                if elapsed_time > 40:
+                    print(f"   Model {self.model_name} too slow ({elapsed_time:.2f}s > 40s)")
                     self.slow_models.add(self.model_name)
                     # Try reducing examples before switching model
                     if current_example_count > min_examples:
