@@ -4,21 +4,29 @@
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width">
-        <title>Vermelho de Paixão Archive & GPT</title>
+        <title>Vermelho de Paixão GPT</title>
         <link rel="icon" type="image/x-icon" href="imgs/favicon.ico">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-        <link href="css/main-style.css" rel="stylesheet"/>
+        <link href="css/vdpx-style.css" rel="stylesheet"/>
         <script>
             const query_string = window.location.search;
-            // Global variables for infinite scroll
+            // infinite scroll
             let currentPage = 0;
             let isLoading = false;
             let hasMore = true;
-            let postsPerPage = 10; // Load 10 at a time
-            let filteredPosts = null; // For search results
+            let postsPerPage = 10; 
+            let filteredPosts = null;
+            let generatedArticles = []; 
         </script>
-        <script type="text/javascript" src="scripts/materias.js"></script>  
+        <script type="text/javascript" src="scripts/all_materias.js" onerror="console.log('Could not load old articles')"></script>
+        <script>
+            if (typeof x !== 'undefined' && Array.isArray(x)) {
+                var x_old = x;
+                console.log('Captured ' + x.length + ' old articles as x_old');
+            }
+        </script>
+        <script type="text/javascript" src="scripts/materias_generated.js" onerror="console.log('No generated articles yet')"></script>
     </head>
     <body class="bg-danger bg-gradient">
         <nav id="nav">
@@ -30,26 +38,40 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.html">Home | Arquivo</a>
+                            <a class="nav-link" href="archive.html">Arquivo</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Quem somos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="vdpgpt.html">Vermelho de Paixão GPT</a>
+                            <a class="nav-link active" aria-current="page" href="index.html">Vermelho de Paixão GPT</a>
                         </li>
                     </ul>
                     <form class="d-flex" target="_self" method="GET" id="searchForm">
-                        <input class="form-control me-2" type="search" id="isearch" placeholder="Procure na página" aria-label="Search" name="search"/>
+                        <input class="form-control me-2" type="search" id="isearch" placeholder="Digite um tópico" aria-label="Search" name="query"/>
                         <button class="btn btn-outline-danger" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stars" viewBox="0 0 16 16">
+                                <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828l.645-1.937zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.734 1.734 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.734 1.734 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.734 1.734 0 0 0 3.407 2.31l.387-1.162zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L10.863.1z"/>
                             </svg>
+                            Gerar
                         </button>
                     </form>
                 </div>
             </div>
         </nav>
+        <div class="alert alert-light alert-dismissible mx-auto w-75 mt-3 text-danger text-center position-relative" role="alert">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="d-flex justify-content-center align-items-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-robot me-2" viewBox="0 0 16 16">
+                    <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.6 26.6 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.93.93 0 0 1-.765.935c-.845.147-2.34.346-4.235.346s-3.39-.2-4.235-.346A.93.93 0 0 1 3 9.219zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a25 25 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25 25 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135"/>
+                    <path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2zM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5"/>
+                </svg>
+                <strong>Vermelho de Paixão GPT</strong>
+            </div>
+            <div>
+                <small>Digite um tópico, faça perguntas na seção de pesquisa e clique em "Gerar" para criar novos artigos</small>
+            </div>
+        </div>
         <div id="alert_" role="alert" class="hidden_">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
               <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
@@ -58,8 +80,18 @@
                 <span id="alert_msg"></span>
             </div>
         </div>
+        
+        
+        <div id="generation_status" class="hidden_ alert alert-primary mx-auto w-75 mt-3 text-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+            <span id="generation_message"></span>
+        </div>
+        
         <main id="_artigos">
         </main>
+        
         <div id="loadingIndicator" class="text-center my-4 hidden_">
             <div class="spinner-border text-light" role="status">
                 <span class="visually-hidden">Carregando...</span>
@@ -69,8 +101,8 @@
         <div id="noMorePosts" class="text-center my-4 hidden_">
             <p class="text-light">Não há mais artigos para carregar.</p>
         </div>
+        
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="js/main.js"></script> 
+        <script type="text/javascript" src="js/vdpgpt.js"></script> 
     </body>
 </html>
-
