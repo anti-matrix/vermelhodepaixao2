@@ -640,17 +640,43 @@ class ArticleGenerator:
     
     def create_contextual_prompt(self, topic, author, current_date, player, staff, target_length):
         
+        # NEW: Send at least 100 articles in batches of 5 with 2-minute timeout
+        start_time = time.time()
+        timeout_seconds = 120  # 2 minutes
+        batch_size = 5
+        target_articles = 100
+        
+        all_selected_examples = []
+        
         if self.good_articles:
-            # Use a smaller sample to save memory
-            sample_size = min(5, len(self.good_articles))
-            examples = random.sample(self.good_articles, sample_size)
-        else:
-            examples = []
+            available_articles = len(self.good_articles)
+            articles_to_process = min(target_articles, available_articles)
+            
+            # RANDOM SAMPLING: Shuffle and take first N articles
+            shuffled_articles = random.sample(self.good_articles, articles_to_process)
+            
+            # Process articles in batches of 5
+            for batch_start in range(0, articles_to_process, batch_size):
+                # Check timeout
+                elapsed_time = time.time() - start_time
+                if elapsed_time >= timeout_seconds:
+                    print(f"   ⏱️ Timeout reached at {elapsed_time:.1f}s after processing {len(all_selected_examples)} articles")
+                    break
+                
+                batch_end = min(batch_start + batch_size, articles_to_process)
+                batch = shuffled_articles[batch_start:batch_end]
+                all_selected_examples.extend(batch)
+                
+                # Memory-conscious: Log progress every 20 articles
+                if len(all_selected_examples) % 20 == 0:
+                    print(f"   📚 Loaded {len(all_selected_examples)}/{articles_to_process} articles for context ({elapsed_time:.1f}s elapsed)")
+        
+        print(f"   ✅ Final context: {len(all_selected_examples)} articles in {time.time() - start_time:.1f}s")
         
         examples_text = ""
-        if examples:
-            examples_text = "EXEMPLOS DE ARTIGOS REAIS DO BLOG (ANALISE BEM O ESTILO, ESTRUTURA E LINGUAGEM):\n\n"
-            for i, ex in enumerate(examples, 1):
+        if all_selected_examples:
+            examples_text = f"EXEMPLOS DE ARTIGOS REAIS DO BLOG ({len(all_selected_examples)} ARTIGOS - ANALISE BEM O ESTILO, ESTRUTURA E LINGUAGEM):\n\n"
+            for i, ex in enumerate(all_selected_examples, 1):
                 title = ex.get('_titulo', '').strip()
                 content = ex.get('_conteudo', '').strip()
                 if len(content) > 500:
