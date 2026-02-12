@@ -12,8 +12,22 @@
         <script>
             const query_string = window.location.search;
         </script>
-        <script type="text/javascript" src="scripts/all_materias.js"></script>
-        <script type="text/javascript" src="scripts/materias_generated.js"></script>  
+        <script src="scripts/all_materias.js"></script>
+        <script>
+            var x_old = (typeof x !== 'undefined' && Array.isArray(x)) ? x : [];
+            console.log('Captured ' + x_old.length + ' old articles');
+        </script>
+        <script src="scripts/materias_generated.js"></script>
+
+        <script>
+            if (typeof x !== 'undefined' && Array.isArray(x)) {
+                console.log('Loaded ' + x.length + ' generated articles');
+                x = x_old.concat(x);  // merge
+                console.log('Total articles available: ' + x.length);
+            } else {
+                x = x_old;
+            }
+        </script> 
     </head>
     <body class="bg-danger bg-gradient">
         <nav id="nav">
