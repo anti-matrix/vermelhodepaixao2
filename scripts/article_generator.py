@@ -18,6 +18,10 @@ import os
 PORT = 10000  # Render default port
 
 class ArticleGenerator:
+    # Maximum number of real article examples to inject into the prompt
+    MAX_EXAMPLES = 80
+    MIN_EXAMPLES = 5
+
     def __init__(self, api_key="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"):
         # ═══════════════════════════════════════════════════════
         # SEMPRE INICIALIZAR ATRIBUTOS CRÍTICOS PRIMEIRO
@@ -510,6 +514,14 @@ class ArticleGenerator:
                 print(f"Model {test_model} timed out")
                 self.slow_models.add(test_model)
             return False
+
+    def select_random_examples(self, count):
+        """Return a random sample of up to `count` articles from good_articles.
+        If good_articles has fewer than `count` items, return all of them."""
+        if not self.good_articles:
+            return []
+        n = min(count, len(self.good_articles))
+        return random.sample(self.good_articles, n)
     
     def generate_article(self, topic=None, max_length=500, max_retries=5):
         # Ensure client is initialized
@@ -537,15 +549,26 @@ class ArticleGenerator:
         staff = self.get_random_staff()
         target_length = max_length
         
+        # Dynamic example count: start high, reduce on context length errors or timeouts
+        current_example_count = min(self.MAX_EXAMPLES, len(self.good_articles))
+        reduction_factor = 0.5  # reduce by half each time
+        min_examples = self.MIN_EXAMPLES
+        
         retry_count = 0
         original_model = self.model_name
+        example_reduction_attempts = 0
+        max_reduction_attempts = 5
         
         while retry_count < max_retries:
             try:
                 print(f"Generating article on: {topic}")
                 print(f"   Using model: {self.model_name}")
+                print(f"   Using {current_example_count} example articles for context injection")
                 
-                prompt = self.create_contextual_prompt(topic, author, current_date, player, staff, target_length)
+                prompt = self.create_contextual_prompt(
+                    topic, author, current_date, player, staff, target_length,
+                    num_examples=current_example_count
+                )
                 
                 start_time = time.time()
                 
@@ -573,9 +596,20 @@ class ArticleGenerator:
                 if elapsed_time > 25:
                     print(f"   Model {self.model_name} too slow ({elapsed_time:.2f}s > 25s)")
                     self.slow_models.add(self.model_name)
-                    
+                    # Try reducing examples before switching model
+                    if current_example_count > min_examples:
+                        new_count = max(int(current_example_count * reduction_factor), min_examples)
+                        if new_count < current_example_count:
+                            print(f"   Reducing examples from {current_example_count} to {new_count}")
+                            current_example_count = new_count
+                            example_reduction_attempts += 1
+                            continue  # retry with same model, fewer examples
+                    # If already at minimum, switch model
                     if self.switch_to_next_model():
                         retry_count += 1
+                        # Reset example count to maximum for new model
+                        current_example_count = min(self.MAX_EXAMPLES, len(self.good_articles))
+                        example_reduction_attempts = 0
                         print(f"Retrying with {self.model_name} (attempt {retry_count}/{max_retries})")
                         continue
                     else:
@@ -592,6 +626,7 @@ class ArticleGenerator:
                 article_data['_topic'] = topic
                 article_data['_provider'] = 'groq'
                 article_data['_response_time'] = elapsed_time
+                article_data['_examples_used'] = current_example_count  # track for debugging
                 
                 print(f"Successfully generated: {article_data.get('_titulo', 'Untitled')}")
                 return article_data
@@ -600,21 +635,50 @@ class ArticleGenerator:
                 error_msg = str(e)
                 print(f"Error with model {self.model_name}: {error_msg[:100]}...")
                 
-                if "429" in error_msg or "rate_limit" in error_msg:
+                # Handle context length / token limit errors -> reduce examples
+                if ("context" in error_msg.lower() or "length" in error_msg.lower() or
+                    "token" in error_msg.lower() or "maximum" in error_msg.lower()):
+                    if current_example_count > min_examples:
+                        new_count = max(int(current_example_count * reduction_factor), min_examples)
+                        if new_count < current_example_count:
+                            print(f"   Context length error – reducing examples from {current_example_count} to {new_count}")
+                            current_example_count = new_count
+                            example_reduction_attempts += 1
+                            continue  # retry with same model, fewer examples
+                    # If already at minimum, treat as model failure and switch
+                    print("   Already at minimum examples, marking model as problematic")
+                    self.slow_models.add(self.model_name)
+                
+                # Rate limiting -> switch model
+                elif "429" in error_msg or "rate_limit" in error_msg:
                     print(f"Rate limit hit for {self.model_name}")
                     self.rate_limited_models.add(self.model_name)
-                    
+                
+                # Timeout -> mark slow, then try reduce examples or switch
                 elif "timeout" in error_msg.lower() or "timed out" in error_msg.lower():
                     print(f"Timeout for {self.model_name}")
                     self.slow_models.add(self.model_name)
-                    
+                    # Reduce examples if possible
+                    if current_example_count > min_examples:
+                        new_count = max(int(current_example_count * reduction_factor), min_examples)
+                        if new_count < current_example_count:
+                            print(f"   Timeout – reducing examples from {current_example_count} to {new_count}")
+                            current_example_count = new_count
+                            example_reduction_attempts += 1
+                            continue
+                
+                # Model not found -> remove from available list
                 elif "model_not_found" in error_msg.lower() or "does not exist" in error_msg.lower():
                     print(f"Model {self.model_name} not available")
                     if self.model_name in self.available_models:
                         self.available_models.remove(self.model_name)
                 
+                # If we haven't continued above, try switching model
                 if self.switch_to_next_model():
                     retry_count += 1
+                    # Reset example count to maximum for new model
+                    current_example_count = min(self.MAX_EXAMPLES, len(self.good_articles))
+                    example_reduction_attempts = 0
                     print(f"Retrying with {self.model_name} (attempt {retry_count}/{max_retries})")
                     continue
                 else:
@@ -638,12 +702,11 @@ class ArticleGenerator:
         
         return sorted(word_count.items(), key=lambda x: x[1], reverse=True)
     
-    def create_contextual_prompt(self, topic, author, current_date, player, staff, target_length):
+    def create_contextual_prompt(self, topic, author, current_date, player, staff, target_length, num_examples=5):
         
         if self.good_articles:
-            # Use a smaller sample to save memory
-            sample_size = min(5, len(self.good_articles))
-            examples = random.sample(self.good_articles, sample_size)
+            # Use the requested number of examples (randomly selected)
+            examples = self.select_random_examples(num_examples)
         else:
             examples = []
         
