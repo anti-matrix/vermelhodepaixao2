@@ -20,6 +20,12 @@
             let generatedArticles = []; 
         </script>
         <script type="text/javascript" src="scripts/all_materias.js" onerror="console.log('Could not load old articles')"></script>
+        <script>
+            if (typeof x !== 'undefined' && Array.isArray(x)) {
+                var x_old = x;
+                console.log('Captured ' + x.length + ' old articles as x_old');
+            }
+        </script>
         <script type="text/javascript" src="scripts/materias_generated.js" onerror="console.log('No generated articles yet')"></script>
     </head>
     <body class="bg-danger bg-gradient">
